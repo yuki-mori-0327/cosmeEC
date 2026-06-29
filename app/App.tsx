@@ -1,0 +1,870 @@
+import { motion, useInView } from "motion/react";
+import { useRef, useState, useEffect } from "react";
+import {
+  ShoppingBag,
+  Search,
+  Menu,
+  X,
+  Heart,
+  Star,
+  ArrowRight,
+  Plus,
+  ChevronRight,
+} from "lucide-react";
+
+const PRODUCTS = [
+  {
+    id: 1,
+    name: "ルミナス セラム",
+    subtitle: "光輝くエッセンス",
+    price: "¥12,800",
+    category: "スキンケア",
+    rating: 4.9,
+    reviews: 238,
+    badge: "ベストセラー",
+    img: "https://images.unsplash.com/photo-1764694071462-db50e50a3925?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 2,
+    name: "ヴェルヴェット ルージュ",
+    subtitle: "リッチモイストリップ",
+    price: "¥4,500",
+    category: "リップ",
+    rating: 4.8,
+    reviews: 412,
+    badge: "新作",
+    img: "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 3,
+    name: "グロウ プライマー",
+    subtitle: "完璧な仕上がりのベース",
+    price: "¥8,200",
+    category: "ベースメイク",
+    rating: 4.7,
+    reviews: 156,
+    badge: null,
+    img: "https://images.unsplash.com/photo-1777840347880-747242e0db00?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 4,
+    name: "アイパレット「夕暮れ」",
+    subtitle: "14色のドラマティックカラー",
+    price: "¥9,800",
+    category: "アイメイク",
+    rating: 4.9,
+    reviews: 321,
+    badge: "限定",
+    img: "https://images.unsplash.com/photo-1526045405698-cf8b8acc4aaf?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 5,
+    name: "ローズ ミスト トナー",
+    subtitle: "うるおいチャージミスト",
+    price: "¥6,300",
+    category: "スキンケア",
+    rating: 4.6,
+    reviews: 89,
+    badge: null,
+    img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 6,
+    name: "シルク ファンデーション",
+    subtitle: "第二の肌、自然なカバー",
+    price: "¥11,500",
+    category: "ベースメイク",
+    rating: 4.8,
+    reviews: 274,
+    badge: "人気",
+    img: "https://images.unsplash.com/photo-1527632911563-ee5b6d53465b?w=600&h=700&fit=crop&auto=format",
+  },
+];
+
+const MARQUEE_ITEMS = [
+  "FREE SHIPPING ON ¥10,000+",
+  "LUXURY BEAUTY",
+  "CLEAN FORMULAS",
+  "CRUELTY FREE",
+  "VEGAN",
+  "SUSTAINABLE PACKAGING",
+];
+
+function useScrolled() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+  return scrolled;
+}
+
+function FadeUp({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function StarRating({ rating }: { rating: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <Star
+          key={s}
+          size={11}
+          className={s <= Math.floor(rating) ? "fill-[#c9a84c] text-[#c9a84c]" : "text-white/20"}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Nav() {
+  const scrolled = useScrolled();
+  const [open, setOpen] = useState(false);
+  const [cartCount] = useState(2);
+
+  return (
+    <>
+      <header
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+        style={{
+          background: scrolled
+            ? "rgba(12,8,16,0.92)"
+            : "transparent",
+          backdropFilter: scrolled ? "blur(20px)" : "none",
+          borderBottom: scrolled ? "1px solid rgba(201,168,76,0.12)" : "none",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <button
+              onClick={() => setOpen(true)}
+              className="md:hidden text-foreground/70 hover:text-primary transition-colors"
+            >
+              <Menu size={20} />
+            </button>
+            <nav className="hidden md:flex gap-7 text-xs tracking-[0.18em] uppercase">
+              {["スキンケア", "メイクアップ", "フレグランス", "コレクション"].map((item) => (
+                <a
+                  key={item}
+                  href="#"
+                  className="text-foreground/60 hover:text-primary transition-colors duration-300"
+                >
+                  {item}
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          <a
+            href="#"
+            className="absolute left-1/2 -translate-x-1/2 font-['Cormorant_Garamond'] text-xl tracking-[0.25em] text-foreground font-medium"
+          >
+            LUMIÈRE
+          </a>
+
+          <div className="flex items-center gap-5">
+            <button className="text-foreground/60 hover:text-primary transition-colors">
+              <Search size={18} />
+            </button>
+            <button className="text-foreground/60 hover:text-primary transition-colors">
+              <Heart size={18} />
+            </button>
+            <button className="relative text-foreground/60 hover:text-primary transition-colors">
+              <ShoppingBag size={18} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-accent text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-medium">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Drawer */}
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[100] flex"
+        >
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          <motion.nav
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", damping: 28, stiffness: 200 }}
+            className="relative w-72 h-full bg-card flex flex-col p-8 gap-6"
+          >
+            <button
+              onClick={() => setOpen(false)}
+              className="self-end text-foreground/40 hover:text-primary"
+            >
+              <X size={20} />
+            </button>
+            <div className="font-['Cormorant_Garamond'] text-2xl tracking-widest mb-4">LUMIÈRE</div>
+            {["スキンケア", "メイクアップ", "フレグランス", "コレクション", "新作", "セール"].map(
+              (item) => (
+                <a
+                  key={item}
+                  href="#"
+                  className="text-foreground/70 hover:text-primary transition-colors text-sm tracking-widest uppercase border-b border-border pb-4"
+                >
+                  {item}
+                </a>
+              )
+            )}
+          </motion.nav>
+        </motion.div>
+      )}
+    </>
+  );
+}
+
+function MarqueeStrip() {
+  const items = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+  return (
+    <div className="overflow-hidden py-3 border-y border-border/40 bg-secondary/30">
+      <div className="marquee-track flex gap-12 whitespace-nowrap">
+        {items.map((item, i) => (
+          <span
+            key={i}
+            className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground flex items-center gap-12"
+          >
+            {item}
+            <span className="text-primary/40">◆</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Background gradient orbs */}
+      <div
+        className="orb-1 absolute w-[600px] h-[600px] rounded-full blur-[140px] pointer-events-none"
+        style={{ background: "#c9a84c", top: "-10%", right: "-5%" }}
+      />
+      <div
+        className="orb-2 absolute w-[400px] h-[400px] rounded-full blur-[110px] pointer-events-none"
+        style={{ background: "#a07828", bottom: "10%", left: "10%" }}
+      />
+      <div
+        className="absolute w-[250px] h-[250px] rounded-full opacity-10 blur-[80px] pointer-events-none"
+        style={{ background: "#f5e09a", top: "40%", left: "30%" }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pt-28 pb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Text */}
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6"
+            >
+              2024 New Collection
+            </motion.p>
+
+            <div className="overflow-hidden mb-2">
+              <motion.h1
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="font-['Cormorant_Garamond'] text-5xl md:text-7xl lg:text-8xl font-medium leading-[0.95] text-foreground"
+              >
+                美しさは
+              </motion.h1>
+            </div>
+            <div className="overflow-hidden mb-2">
+              <motion.h1
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 1, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="font-['Cormorant_Garamond'] italic text-5xl md:text-7xl lg:text-8xl font-medium leading-[0.95] gold-shimmer"
+              >
+                あなたの中に
+              </motion.h1>
+            </div>
+            <div className="overflow-hidden mb-8">
+              <motion.h1
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                className="font-['Cormorant_Garamond'] text-5xl md:text-7xl lg:text-8xl font-medium leading-[0.95] text-foreground"
+              >
+                宿っている
+              </motion.h1>
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
+              className="text-muted-foreground text-sm leading-relaxed max-w-sm mb-10 font-['Jost'] font-light"
+            >
+              自然由来の成分と最先端のサイエンスが融合した、
+              あなたの内側から輝きを引き出すラグジュアリービューティー。
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.05 }}
+              className="flex flex-wrap gap-4"
+            >
+              <button className="group relative overflow-hidden px-8 py-4 bg-primary text-primary-foreground text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:shadow-[0_0_40px_rgba(201,168,76,0.4)]">
+                <span className="relative z-10 flex items-center gap-2">
+                  コレクションを見る
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span className="absolute inset-0 bg-accent translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+              </button>
+              <button className="px-8 py-4 border border-border text-foreground/70 hover:text-primary hover:border-primary/40 text-xs tracking-[0.2em] uppercase transition-all duration-300">
+                新作を見る
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="relative flex justify-center"
+          >
+            <div className="float-anim relative">
+              <div
+                className="absolute inset-0 rounded-[2px] blur-[60px] opacity-30"
+                style={{ background: "linear-gradient(135deg, #c9a84c, #f5e09a)" }}
+              />
+              <img
+                src="https://images.unsplash.com/photo-1600634999623-864991678406?w=560&h=700&fit=crop&auto=format"
+                alt="Luxury perfume bottle"
+                className="relative w-full max-w-sm object-cover"
+                style={{ aspectRatio: "4/5" }}
+              />
+            </div>
+
+            {/* Floating badge */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 1.3 }}
+              className="absolute bottom-12 -left-4 md:-left-12 bg-card/90 backdrop-blur-md border border-border/60 p-4 max-w-[160px]"
+            >
+              <p className="text-[9px] tracking-widest uppercase text-muted-foreground mb-1">今月の人気 No.1</p>
+              <p className="font-['Cormorant_Garamond'] text-sm text-foreground">ルミナス セラム</p>
+              <div className="flex items-center gap-2 mt-2">
+                <StarRating rating={4.9} />
+                <span className="text-[10px] text-muted-foreground">4.9</span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 1.5 }}
+              className="absolute top-16 -right-4 md:-right-8 bg-primary/10 backdrop-blur-md border border-primary/20 px-4 py-3"
+            >
+              <p className="text-[9px] tracking-widest uppercase text-primary">Cruelty Free</p>
+              <p className="text-[9px] tracking-widest uppercase text-primary/60">Vegan · Clean</p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.8 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground">スクロール</span>
+        <div className="w-px h-12 bg-gradient-to-b from-primary/60 to-transparent scroll-line" />
+      </motion.div>
+    </section>
+  );
+}
+
+function Collections() {
+  const collections = [
+    {
+      title: "スキンリチュアル",
+      subtitle: "毎日の儀式",
+      desc: "肌本来の美しさを引き出す、上質なスキンケアライン",
+      img: "https://images.unsplash.com/photo-1782034493928-d8410275cfcd?w=700&h=900&fit=crop&auto=format",
+      tag: "SKINCARE",
+      col: "col-span-1 md:row-span-2",
+    },
+    {
+      title: "カラードラマ",
+      subtitle: "色彩の魔法",
+      desc: "大胆で繊細な発色が、あなたの個性を際立たせる",
+      img: "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=700&h=400&fit=crop&auto=format",
+      tag: "MAKEUP",
+      col: "col-span-1",
+    },
+    {
+      title: "センシュアル フレグランス",
+      subtitle: "香りの物語",
+      desc: "記憶に刻まれる、唯一無二の香りを纏う",
+      img: "https://images.unsplash.com/photo-1591375462469-62f189694738?w=700&h=400&fit=crop&auto=format",
+      tag: "FRAGRANCE",
+      col: "col-span-1",
+    },
+  ];
+
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-24">
+      <FadeUp className="mb-12">
+        <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Collections</p>
+        <h2 className="font-['Cormorant_Garamond'] text-4xl md:text-5xl text-foreground">
+          厳選された
+          <span className="italic text-primary"> コレクション</span>
+        </h2>
+      </FadeUp>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {collections.map((c, i) => (
+          <FadeUp key={c.title} delay={i * 0.15} className={c.col}>
+            <div className="group relative overflow-hidden cursor-pointer h-full min-h-[280px] md:min-h-[320px]">
+              <img
+                src={c.img}
+                alt={c.title}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-6">
+                <p className="text-[9px] tracking-[0.4em] uppercase text-primary/80 mb-2">{c.tag}</p>
+                <h3 className="font-['Cormorant_Garamond'] text-2xl text-white mb-1">{c.title}</h3>
+                <p className="text-xs text-white/60 font-['Jost'] font-light mb-4">{c.desc}</p>
+                <button className="flex items-center gap-2 text-[10px] tracking-widest uppercase text-primary hover:gap-3 transition-all duration-300">
+                  詳しく見る <ChevronRight size={12} />
+                </button>
+              </div>
+            </div>
+          </FadeUp>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProductCard({ product, index }: { product: (typeof PRODUCTS)[0]; index: number }) {
+  const [liked, setLiked] = useState(false);
+  const [added, setAdded] = useState(false);
+
+  const handleAdd = () => {
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+
+  return (
+    <FadeUp delay={index * 0.08}>
+      <div className="group relative flex flex-col">
+        <div className="relative overflow-hidden bg-card aspect-[3/4] mb-4">
+          <img
+            src={product.img}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+          {product.badge && (
+            <span className="absolute top-3 left-3 bg-accent text-white text-[9px] tracking-[0.2em] uppercase px-2.5 py-1">
+              {product.badge}
+            </span>
+          )}
+          <button
+            onClick={() => setLiked(!liked)}
+            className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-black/30 backdrop-blur-sm hover:bg-black/50 transition-colors"
+          >
+            <Heart
+              size={14}
+              className={liked ? "fill-accent text-accent" : "text-white/70"}
+            />
+          </button>
+          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-out p-4">
+            <button
+              onClick={handleAdd}
+              className="w-full py-3 bg-primary text-primary-foreground text-[10px] tracking-[0.2em] uppercase flex items-center justify-center gap-2 hover:bg-accent transition-colors duration-300"
+            >
+              {added ? (
+                "カートに追加済み ✓"
+              ) : (
+                <>
+                  <Plus size={12} /> カートに追加
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-[9px] tracking-[0.25em] uppercase text-muted-foreground mb-1">
+            {product.category}
+          </p>
+          <h3 className="font-['Cormorant_Garamond'] text-base text-foreground mb-0.5">{product.name}</h3>
+          <p className="text-xs text-muted-foreground font-light mb-2">{product.subtitle}</p>
+          <div className="flex items-center justify-between">
+            <span className="text-primary font-medium text-sm">{product.price}</span>
+            <div className="flex items-center gap-1.5">
+              <StarRating rating={product.rating} />
+              <span className="text-[10px] text-muted-foreground">({product.reviews})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </FadeUp>
+  );
+}
+
+function NewArrivals() {
+  const [activeFilter, setActiveFilter] = useState("すべて");
+  const filters = ["すべて", "スキンケア", "ベースメイク", "リップ", "アイメイク"];
+
+  const filtered =
+    activeFilter === "すべて"
+      ? PRODUCTS
+      : PRODUCTS.filter((p) => p.category === activeFilter);
+
+  return (
+    <section className="py-24 bg-secondary/20">
+      <div className="max-w-7xl mx-auto px-6">
+        <FadeUp className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+          <div>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">New Arrivals</p>
+            <h2 className="font-['Cormorant_Garamond'] text-4xl md:text-5xl text-foreground">
+              新着アイテム
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {filters.map((f) => (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f)}
+                className={`px-4 py-2 text-[10px] tracking-widest uppercase transition-all duration-300 border ${
+                  activeFilter === f
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border/40 text-muted-foreground hover:border-primary/30 hover:text-primary"
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </FadeUp>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-x-6 gap-y-10">
+          {filtered.map((product, i) => (
+            <ProductCard key={product.id} product={product} index={i} />
+          ))}
+        </div>
+
+        <FadeUp className="text-center mt-14">
+          <button className="group inline-flex items-center gap-3 border border-border/40 hover:border-primary/50 px-10 py-4 text-xs tracking-[0.25em] uppercase text-foreground/70 hover:text-primary transition-all duration-300">
+            すべての商品を見る
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </FadeUp>
+      </div>
+    </section>
+  );
+}
+
+function BrandStory() {
+  return (
+    <section className="relative overflow-hidden py-32">
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: "radial-gradient(circle, #d4967a 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <FadeUp className="relative">
+          <div className="relative overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1763503839418-2b45c3d7a3c3?w=600&h=700&fit=crop&auto=format"
+              alt="Luxury cream product"
+              className="w-full object-cover"
+              style={{ aspectRatio: "5/6" }}
+            />
+          </div>
+          <div
+            className="absolute -bottom-6 -right-6 w-48 h-48 border border-primary/20 pointer-events-none"
+            style={{ zIndex: -1 }}
+          />
+          <motion.div
+            className="absolute -top-6 -left-6 w-32 h-32"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          >
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <path
+                id="circle-text"
+                d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+                fill="none"
+              />
+              <text className="fill-primary/50" style={{ fontSize: "10px", letterSpacing: "3px" }}>
+                <textPath href="#circle-text">LUMIÈRE · BEAUTY · LUXURY · CLEAN ·</textPath>
+              </text>
+            </svg>
+          </motion.div>
+        </FadeUp>
+
+        <FadeUp delay={0.2}>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6">Our Story</p>
+          <h2 className="font-['Cormorant_Garamond'] text-4xl md:text-5xl text-foreground leading-tight mb-6">
+            自然と科学の
+            <br />
+            <span className="italic text-primary">完璧な調和</span>
+          </h2>
+          <p className="text-muted-foreground text-sm leading-loose font-['Jost'] font-light mb-6">
+            LUMIÈREは、フランスのプロヴァンスで生まれたラグジュアリービューティーブランドです。
+            自然由来の成分にこだわり、肌に優しく、地球にも優しい製品作りを続けています。
+          </p>
+          <p className="text-muted-foreground text-sm leading-loose font-['Jost'] font-light mb-10">
+            すべての製品はクルエルティフリーで、ヴィーガン認定済み。
+            持続可能な農業から採取された成分を使用し、100%リサイクル可能なパッケージにこだわっています。
+          </p>
+          <div className="grid grid-cols-3 gap-6 mb-10">
+            {[
+              { num: "15+", label: "年の研究" },
+              { num: "98%", label: "天然成分" },
+              { num: "50+", label: "国で販売" },
+            ].map((stat) => (
+              <div key={stat.label} className="border-l border-primary/30 pl-4">
+                <p className="font-['Cormorant_Garamond'] text-2xl text-primary">{stat.num}</p>
+                <p className="text-[10px] tracking-widest uppercase text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+          <button className="group flex items-center gap-3 text-xs tracking-[0.25em] uppercase text-primary hover:gap-4 transition-all duration-300">
+            ブランドストーリーを読む <ArrowRight size={14} />
+          </button>
+        </FadeUp>
+      </div>
+    </section>
+  );
+}
+
+function Newsletter() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) setSubmitted(true);
+  };
+
+  return (
+    <section className="relative overflow-hidden py-24">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(245,224,154,0.05) 50%, rgba(160,120,40,0.10) 100%)",
+        }}
+      />
+      <div className="absolute inset-0 border-y border-primary/10" />
+
+      <FadeUp className="relative max-w-2xl mx-auto px-6 text-center">
+        <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4">Newsletter</p>
+        <h2 className="font-['Cormorant_Garamond'] text-3xl md:text-4xl text-foreground mb-4">
+          美しさの<span className="italic text-primary">秘密</span>を受け取る
+        </h2>
+        <p className="text-muted-foreground text-sm font-['Jost'] font-light mb-8">
+          新作情報、限定オファー、ビューティーtipsをいち早くお届けします。
+          登録で初回購入10%OFF。
+        </p>
+
+        {submitted ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="py-4 px-8 border border-primary/40 text-primary text-sm tracking-widest"
+          >
+            ご登録ありがとうございます ✦
+          </motion.div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="メールアドレスを入力"
+              className="flex-1 bg-muted/40 border border-border/60 px-5 py-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 transition-colors font-['Jost'] font-light"
+            />
+            <button
+              type="submit"
+              className="group relative overflow-hidden px-8 py-4 bg-primary text-primary-foreground text-xs tracking-[0.2em] uppercase whitespace-nowrap hover:shadow-[0_0_30px_rgba(201,168,76,0.3)] transition-shadow"
+            >
+              <span className="relative z-10">登録する</span>
+              <span className="absolute inset-0 bg-accent translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+            </button>
+          </form>
+        )}
+      </FadeUp>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-border/30 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
+          <div className="col-span-2 md:col-span-1">
+            <div className="font-['Cormorant_Garamond'] text-2xl tracking-[0.3em] text-foreground mb-4">
+              LUMIÈRE
+            </div>
+            <p className="text-xs text-muted-foreground font-light leading-relaxed max-w-[200px]">
+              自然と科学の調和から生まれた、ラグジュアリービューティー。
+            </p>
+          </div>
+          {[
+            {
+              title: "ショッピング",
+              links: ["スキンケア", "メイクアップ", "フレグランス", "ギフトセット"],
+            },
+            {
+              title: "サポート",
+              links: ["よくある質問", "配送について", "返品・交換", "お問い合わせ"],
+            },
+            {
+              title: "ブランド",
+              links: ["私たちについて", "サステナビリティ", "採用情報", "プレス"],
+            },
+          ].map((col) => (
+            <div key={col.title}>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/80 mb-5">{col.title}</p>
+              <ul className="space-y-3">
+                {col.links.map((link) => (
+                  <li key={link}>
+                    <a
+                      href="#"
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t border-border/30 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-[10px] text-muted-foreground tracking-widest">
+            © 2024 LUMIÈRE BEAUTY. ALL RIGHTS RESERVED.
+          </p>
+          <div className="flex gap-6">
+            {["プライバシーポリシー", "利用規約", "特定商取引法"].map((item) => (
+              <a
+                key={item}
+                href="#"
+                className="text-[10px] text-muted-foreground hover:text-primary transition-colors tracking-wider"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <style>{`
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .marquee-track {
+          animation: marquee 24s linear infinite;
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-18px); }
+        }
+        .float-anim {
+          animation: float 6s ease-in-out infinite;
+        }
+        @keyframes orbPulse {
+          0%, 100% { opacity: 0.15; transform: scale(1); }
+          50% { opacity: 0.22; transform: scale(1.08); }
+        }
+        .orb-1 { animation: orbPulse 8s ease-in-out infinite; }
+        .orb-2 { animation: orbPulse 10s ease-in-out infinite 2s; }
+        @keyframes scrollLine {
+          0% { transform: scaleY(0); transform-origin: top; }
+          50% { transform: scaleY(1); transform-origin: top; }
+          51% { transform: scaleY(1); transform-origin: bottom; }
+          100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+        .scroll-line {
+          animation: scrollLine 2s ease-in-out infinite;
+        }
+        @keyframes goldShimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        .gold-shimmer {
+          background: linear-gradient(90deg, #c9a84c 0%, #f5e09a 40%, #c9a84c 60%, #a07828 100%);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: goldShimmer 4s linear infinite;
+        }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); }
+        body { font-family: 'Jost', sans-serif; }
+      `}</style>
+
+      <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+        <Nav />
+        <Hero />
+        <MarqueeStrip />
+        <Collections />
+        <NewArrivals />
+        <BrandStory />
+        <Newsletter />
+        <Footer />
+      </div>
+    </>
+  );
+}
