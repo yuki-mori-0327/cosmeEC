@@ -1,5 +1,5 @@
 import { motion, useInView } from "motion/react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, createContext, useContext } from "react";
 import {
   ShoppingBag,
   Search,
@@ -10,7 +10,17 @@ import {
   ArrowRight,
   Plus,
   ChevronRight,
+  SlidersHorizontal,
+  Grid3x3,
+  LayoutList,
+  ChevronDown,
 } from "lucide-react";
+
+type Page = "home" | "collections";
+const NavCtx = createContext<{ page: Page; setPage: (p: Page) => void }>({
+  page: "home",
+  setPage: () => {},
+});
 
 const PRODUCTS = [
   {
@@ -142,6 +152,7 @@ function Nav() {
   const scrolled = useScrolled();
   const [open, setOpen] = useState(false);
   const [cartCount] = useState(2);
+  const { page, setPage } = useContext(NavCtx);
 
   return (
     <>
@@ -168,7 +179,8 @@ function Nav() {
                 <a
                   key={item}
                   href="#"
-                  className="text-foreground/60 hover:text-primary transition-colors duration-300"
+                  onClick={(e) => { e.preventDefault(); if (item === "コレクション") setPage("collections"); }}
+                  className="text-foreground/60 hover:text-primary transition-colors duration-300 cursor-pointer"
                 >
                   {item}
                 </a>
@@ -176,12 +188,12 @@ function Nav() {
             </nav>
           </div>
 
-          <a
-            href="#"
+          <button
+            onClick={() => setPage("home")}
             className="absolute left-1/2 -translate-x-1/2 font-['Cormorant_Garamond'] text-xl tracking-[0.25em] text-foreground font-medium"
           >
             LUMIÈRE
-          </a>
+          </button>
 
           <div className="flex items-center gap-5">
             <button className="text-foreground/60 hover:text-primary transition-colors">
@@ -264,6 +276,7 @@ function MarqueeStrip() {
 }
 
 function Hero() {
+  const { setPage } = useContext(NavCtx);
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background gradient orbs */}
@@ -340,7 +353,10 @@ function Hero() {
               transition={{ duration: 0.8, delay: 1.05 }}
               className="flex flex-wrap gap-4"
             >
-              <button className="group relative overflow-hidden px-8 py-4 bg-primary text-primary-foreground text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:shadow-[0_0_40px_rgba(201,168,76,0.4)]">
+              <button
+                onClick={() => setPage("collections")}
+                className="group relative overflow-hidden px-8 py-4 bg-primary text-primary-foreground text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:shadow-[0_0_40px_rgba(201,168,76,0.4)]"
+              >
                 <span className="relative z-10 flex items-center gap-2">
                   コレクションを見る
                   <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -804,9 +820,273 @@ function Footer() {
   );
 }
 
-export default function App() {
+const ALL_COLLECTION_PRODUCTS = [
+  ...PRODUCTS,
+  {
+    id: 7,
+    name: "パールグロウ マスク",
+    subtitle: "真珠の輝きパックマスク",
+    price: "¥7,800",
+    category: "スキンケア",
+    rating: 4.7,
+    reviews: 143,
+    badge: "新作",
+    img: "https://images.unsplash.com/photo-1739980296455-3f8d6051ca20?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 8,
+    name: "ゴールド アイライナー",
+    subtitle: "24K ゴールドリキッドライン",
+    price: "¥3,800",
+    category: "アイメイク",
+    rating: 4.6,
+    reviews: 198,
+    badge: "限定",
+    img: "https://images.unsplash.com/photo-1523634118614-82b2685ee3df?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 9,
+    name: "ノワール パフューム",
+    subtitle: "オードパルファム 50ml",
+    price: "¥18,000",
+    category: "フレグランス",
+    rating: 4.9,
+    reviews: 87,
+    badge: "ベストセラー",
+    img: "https://images.unsplash.com/photo-1600634999623-864991678406?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 10,
+    name: "サテン リップライナー",
+    subtitle: "なめらかなリップライン",
+    price: "¥2,900",
+    category: "リップ",
+    rating: 4.5,
+    reviews: 312,
+    badge: null,
+    img: "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 11,
+    name: "クリスタル ハイライター",
+    subtitle: "立体感を生む光のハイライト",
+    price: "¥5,600",
+    category: "ベースメイク",
+    rating: 4.8,
+    reviews: 224,
+    badge: "人気",
+    img: "https://images.unsplash.com/photo-1527632911563-ee5b6d53465b?w=600&h=700&fit=crop&auto=format",
+  },
+  {
+    id: 12,
+    name: "ローズ オイル セラム",
+    subtitle: "バラオイル濃縮美容液",
+    price: "¥14,500",
+    category: "スキンケア",
+    rating: 4.9,
+    reviews: 176,
+    badge: null,
+    img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format",
+  },
+];
+
+const SORT_OPTIONS = ["おすすめ順", "新着順", "価格が低い順", "価格が高い順", "レビュー評価順"];
+const CATEGORIES = ["すべて", "スキンケア", "ベースメイク", "リップ", "アイメイク", "フレグランス"];
+
+function CollectionsPage() {
+  const { setPage } = useContext(NavCtx);
+  const [activeCategory, setActiveCategory] = useState("すべて");
+  const [sortBy, setSortBy] = useState("おすすめ順");
+  const [showSort, setShowSort] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 20000]);
+
+  const filtered = ALL_COLLECTION_PRODUCTS.filter((p) =>
+    activeCategory === "すべて" ? true : p.category === activeCategory
+  );
+
+  const sorted = [...filtered].sort((a, b) => {
+    const priceA = parseInt(a.price.replace(/[¥,]/g, ""));
+    const priceB = parseInt(b.price.replace(/[¥,]/g, ""));
+    if (sortBy === "価格が低い順") return priceA - priceB;
+    if (sortBy === "価格が高い順") return priceB - priceA;
+    if (sortBy === "レビュー評価順") return b.rating - a.rating;
+    if (sortBy === "新着順") return b.id - a.id;
+    return 0;
+  });
+
   return (
-    <>
+    <div className="min-h-screen bg-background pt-16">
+      {/* Page Hero */}
+      <div className="relative overflow-hidden py-20 border-b border-border/30">
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: "repeating-linear-gradient(0deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 60px)",
+          }}
+        />
+        <div
+          className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[160px] pointer-events-none"
+          style={{ background: "#c9a84c", opacity: 0.08 }}
+        />
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <button
+              onClick={() => setPage("home")}
+              className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-6"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Collections</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-4">
+              すべての<span className="italic gold-shimmer">コレクション</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light max-w-lg">
+              自然と科学の融合から生まれた、厳選されたラグジュアリービューティーアイテム。
+              あなたの美しさを引き出す、最高品質のコスメをご覧ください。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Toolbar */}
+        <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between mb-8">
+          {/* Category filters */}
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 text-[10px] tracking-[0.2em] uppercase transition-all duration-300 border ${
+                  activeCategory === cat
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border/40 text-muted-foreground hover:border-primary/40 hover:text-primary"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Right controls */}
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] tracking-widest text-muted-foreground">{sorted.length}件</span>
+
+            {/* Sort */}
+            <div className="relative">
+              <button
+                onClick={() => setShowSort(!showSort)}
+                className="flex items-center gap-2 border border-border/40 px-4 py-2 text-[10px] tracking-widest uppercase text-muted-foreground hover:border-primary/40 hover:text-primary transition-all"
+              >
+                {sortBy} <ChevronDown size={11} />
+              </button>
+              {showSort && (
+                <div className="absolute right-0 top-full mt-1 bg-card border border-border/60 z-20 min-w-[160px]">
+                  {SORT_OPTIONS.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => { setSortBy(opt); setShowSort(false); }}
+                      className={`w-full text-left px-4 py-3 text-[10px] tracking-widest uppercase hover:bg-primary/10 hover:text-primary transition-colors ${sortBy === opt ? "text-primary" : "text-muted-foreground"}`}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* View toggle */}
+            <div className="flex border border-border/40">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-primary"}`}
+              >
+                <Grid3x3 size={14} />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-primary"}`}
+              >
+                <LayoutList size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Grid */}
+        {viewMode === "grid" ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
+            {sorted.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col divide-y divide-border/30">
+            {sorted.map((product, i) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                className="flex gap-6 py-6 group"
+              >
+                <div className="relative w-24 h-28 flex-shrink-0 overflow-hidden bg-card">
+                  <img
+                    src={product.img}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {product.badge && (
+                    <span className="absolute top-1 left-1 bg-accent text-white text-[8px] tracking-widest uppercase px-1.5 py-0.5">
+                      {product.badge}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1 flex flex-col justify-center">
+                  <p className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground mb-1">{product.category}</p>
+                  <h3 className="font-['Cormorant_Garamond'] text-xl text-foreground mb-0.5">{product.name}</h3>
+                  <p className="text-xs text-muted-foreground font-['Jost'] font-light mb-3">{product.subtitle}</p>
+                  <div className="flex items-center gap-3">
+                    <StarRating rating={product.rating} />
+                    <span className="text-[10px] text-muted-foreground">({product.reviews})</span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end justify-center gap-3">
+                  <span className="text-primary font-medium text-lg font-['Cormorant_Garamond']">{product.price}</span>
+                  <button className="px-5 py-2 bg-primary text-primary-foreground text-[10px] tracking-widest uppercase hover:bg-accent transition-colors flex items-center gap-1.5">
+                    <Plus size={11} /> カートへ
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {sorted.length === 0 && (
+          <div className="py-24 text-center">
+            <p className="text-muted-foreground text-sm tracking-widest">該当する商品がありません</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [page, setPage] = useState<Page>("home");
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+
+  return (
+    <NavCtx.Provider value={{ page, setPage }}>
+      <>
       <style>{`
         @keyframes marquee {
           from { transform: translateX(0); }
@@ -857,14 +1137,28 @@ export default function App() {
 
       <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
         <Nav />
-        <Hero />
-        <MarqueeStrip />
-        <Collections />
-        <NewArrivals />
-        <BrandStory />
-        <Newsletter />
-        <Footer />
+        <motion.div
+          key={page}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          {page === "home" ? (
+            <>
+              <Hero />
+              <MarqueeStrip />
+              <Collections />
+              <NewArrivals />
+              <BrandStory />
+              <Newsletter />
+              <Footer />
+            </>
+          ) : (
+            <CollectionsPage />
+          )}
+        </motion.div>
       </div>
-    </>
+      </>
+    </NavCtx.Provider>
   );
 }
