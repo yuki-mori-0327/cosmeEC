@@ -17,9 +17,16 @@ import {
 } from "lucide-react";
 
 type Page = "home" | "collections";
-const NavCtx = createContext<{ page: Page; setPage: (p: Page) => void }>({
+const NavCtx = createContext<{
+  page: Page;
+  setPage: (p: Page) => void;
+  initialCategory: string;
+  setInitialCategory: (c: string) => void;
+}>({
   page: "home",
   setPage: () => {},
+  initialCategory: "すべて",
+  setInitialCategory: () => {},
 });
 
 const PRODUCTS = [
@@ -152,7 +159,19 @@ function Nav() {
   const scrolled = useScrolled();
   const [open, setOpen] = useState(false);
   const [cartCount] = useState(2);
-  const { page, setPage } = useContext(NavCtx);
+  const { page, setPage, setInitialCategory } = useContext(NavCtx);
+
+  const NAV_ITEMS: { label: string; category: string }[] = [
+    { label: "スキンケア", category: "スキンケア" },
+    { label: "メイクアップ", category: "すべて" },
+    { label: "フレグランス", category: "フレグランス" },
+    { label: "コレクション", category: "すべて" },
+  ];
+
+  const handleNav = (category: string) => {
+    setInitialCategory(category);
+    setPage("collections");
+  };
 
   return (
     <>
@@ -175,14 +194,14 @@ function Nav() {
               <Menu size={20} />
             </button>
             <nav className="hidden md:flex gap-7 text-xs tracking-[0.18em] uppercase">
-              {["スキンケア", "メイクアップ", "フレグランス", "コレクション"].map((item) => (
+              {NAV_ITEMS.map(({ label, category }) => (
                 <a
-                  key={item}
+                  key={label}
                   href="#"
-                  onClick={(e) => { e.preventDefault(); if (item === "コレクション") setPage("collections"); }}
+                  onClick={(e) => { e.preventDefault(); handleNav(category); }}
                   className="text-foreground/60 hover:text-primary transition-colors duration-300 cursor-pointer"
                 >
-                  {item}
+                  {label}
                 </a>
               ))}
             </nav>
@@ -238,17 +257,23 @@ function Nav() {
               <X size={20} />
             </button>
             <div className="font-['Cormorant_Garamond'] text-2xl tracking-widest mb-4">LUMIÈRE</div>
-            {["スキンケア", "メイクアップ", "フレグランス", "コレクション", "新作", "セール"].map(
-              (item) => (
-                <a
-                  key={item}
-                  href="#"
-                  className="text-foreground/70 hover:text-primary transition-colors text-sm tracking-widest uppercase border-b border-border pb-4"
-                >
-                  {item}
-                </a>
-              )
-            )}
+            {[
+              { label: "スキンケア", category: "スキンケア" },
+              { label: "メイクアップ", category: "すべて" },
+              { label: "フレグランス", category: "フレグランス" },
+              { label: "コレクション", category: "すべて" },
+              { label: "新作", category: "すべて" },
+              { label: "セール", category: "すべて" },
+            ].map(({ label, category }) => (
+              <a
+                key={label}
+                href="#"
+                onClick={(e) => { e.preventDefault(); setOpen(false); handleNav(category); }}
+                className="text-foreground/70 hover:text-primary transition-colors text-sm tracking-widest uppercase border-b border-border pb-4 cursor-pointer"
+              >
+                {label}
+              </a>
+            ))}
           </motion.nav>
         </motion.div>
       )}
@@ -894,8 +919,12 @@ const SORT_OPTIONS = ["おすすめ順", "新着順", "価格が低い順", "価
 const CATEGORIES = ["すべて", "スキンケア", "ベースメイク", "リップ", "アイメイク", "フレグランス"];
 
 function CollectionsPage() {
-  const { setPage } = useContext(NavCtx);
-  const [activeCategory, setActiveCategory] = useState("すべて");
+  const { setPage, initialCategory } = useContext(NavCtx);
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
+    useEffect(() => {
+    setActiveCategory(initialCategory);
+  }, [initialCategory]);
+ 
   const [sortBy, setSortBy] = useState("おすすめ順");
   const [showSort, setShowSort] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -1079,13 +1108,14 @@ function CollectionsPage() {
 
 export default function App() {
   const [page, setPage] = useState<Page>("home");
+  const [initialCategory, setInitialCategory] = useState("すべて");
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
 
   return (
-    <NavCtx.Provider value={{ page, setPage }}>
+    <NavCtx.Provider value={{ page, setPage, initialCategory, setInitialCategory }}>
       <>
       <style>{`
         @keyframes marquee {
