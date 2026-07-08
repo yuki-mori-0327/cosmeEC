@@ -10,23 +10,46 @@ import {
   ArrowRight,
   Plus,
   ChevronRight,
-  SlidersHorizontal,
   Grid3x3,
   LayoutList,
   ChevronDown,
+  Minus,
+  Trash2,
 } from "lucide-react";
 
 type Page = "home" | "collections";
+
+type CartItem = {
+  id: number;
+  name: string;
+  subtitle: string;
+  price: string;
+  img: string;
+  qty: number;
+};
+
 const NavCtx = createContext<{
   page: Page;
   setPage: (p: Page) => void;
   initialCategory: string;
   setInitialCategory: (c: string) => void;
+  cart: CartItem[];
+  addToCart: (product: Omit<CartItem, "qty">) => void;
+  removeFromCart: (id: number) => void;
+  updateQty: (id: number, delta: number) => void;
+  cartOpen: boolean;
+  setCartOpen: (v: boolean) => void;
 }>({
   page: "home",
   setPage: () => {},
   initialCategory: "すべて",
   setInitialCategory: () => {},
+  cart: [],
+  addToCart: () => {},
+  removeFromCart: () => {},
+  updateQty: () => {},
+  cartOpen: false,
+  setCartOpen: () => {},
 });
 
 const PRODUCTS = [
@@ -158,8 +181,8 @@ function StarRating({ rating }: { rating: number }) {
 function Nav() {
   const scrolled = useScrolled();
   const [open, setOpen] = useState(false);
-  const [cartCount] = useState(2);
-  const { page, setPage, setInitialCategory } = useContext(NavCtx);
+  const { page, setPage, setInitialCategory, cart, setCartOpen } = useContext(NavCtx);
+  const cartCount = cart.reduce((sum, i) => sum + i.qty, 0);
 
   const NAV_ITEMS: { label: string; category: string }[] = [
     { label: "スキンケア", category: "スキンケア" },
@@ -221,12 +244,17 @@ function Nav() {
             <button className="text-foreground/60 hover:text-primary transition-colors">
               <Heart size={18} />
             </button>
-            <button className="relative text-foreground/60 hover:text-primary transition-colors">
+            <button onClick={() => setCartOpen(true)} className="relative text-foreground/60 hover:text-primary transition-colors">
               <ShoppingBag size={18} />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-accent text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-medium">
+                <motion.span
+                  key={cartCount}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="absolute -top-1.5 -right-1.5 bg-accent text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-medium"
+                >
                   {cartCount}
-                </span>
+                </motion.span>
               )}
             </button>
           </div>
@@ -523,8 +551,10 @@ function Collections() {
 function ProductCard({ product, index }: { product: (typeof PRODUCTS)[0]; index: number }) {
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
+  const { addToCart } = useContext(NavCtx);
 
   const handleAdd = () => {
+    addToCart({ id: product.id, name: product.name, subtitle: product.subtitle, price: product.price, img: product.img });
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
@@ -919,7 +949,7 @@ const SORT_OPTIONS = ["おすすめ順", "新着順", "価格が低い順", "価
 const CATEGORIES = ["すべて", "スキンケア", "ベースメイク", "リップ", "アイメイク", "フレグランス"];
 
 function CollectionsPage() {
-  const { setPage, initialCategory } = useContext(NavCtx);
+  const { setPage, initialCategory, addToCart } = useContext(NavCtx);
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState("おすすめ順");
   const [showSort, setShowSort] = useState(false);
@@ -1083,7 +1113,10 @@ function CollectionsPage() {
                 </div>
                 <div className="flex flex-col items-end justify-center gap-3">
                   <span className="text-primary font-medium text-lg font-['Cormorant_Garamond']">{product.price}</span>
-                  <button className="px-5 py-2 bg-primary text-primary-foreground text-[10px] tracking-widest uppercase hover:bg-accent transition-colors flex items-center gap-1.5">
+                  <button
+                    onClick={() => addToCart({ id: product.id, name: product.name, subtitle: product.subtitle, price: product.price, img: product.img })}
+                    className="px-5 py-2 bg-primary text-primary-foreground text-[10px] tracking-widest uppercase hover:bg-accent transition-colors flex items-center gap-1.5"
+                  >
                     <Plus size={11} /> カートへ
                   </button>
                 </div>
@@ -1102,16 +1135,162 @@ function CollectionsPage() {
   );
 }
 
+function CartDrawer() {
+  const { cart, cartOpen, setCartOpen, removeFromCart, updateQty } = useContext(NavCtx);
+  const total = cart.reduce((sum, i) => {
+    const n = parseInt(i.price.replace(/[¥,]/g, ""));
+    return sum + n * i.qty;
+  }, 0);
+
+  return (
+    <>
+      {cartOpen && (
+        <div className="fixed inset-0 z-[200] flex justify-end">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setCartOpen(false)}
+          />
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 220 }}
+            className="relative w-full max-w-md bg-card flex flex-col h-full shadow-2xl"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-border/40">
+              <div>
+                <h2 className="font-['Cormorant_Garamond'] text-2xl text-foreground">ショッピングカート</h2>
+                <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mt-0.5">
+                  {cart.reduce((s, i) => s + i.qty, 0)} 点
+                </p>
+              </div>
+              <button
+                onClick={() => setCartOpen(false)}
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Items */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
+              {cart.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+                  <ShoppingBag size={40} className="text-muted-foreground/30" />
+                  <p className="text-sm text-muted-foreground tracking-widest">カートは空です</p>
+                </div>
+              ) : (
+                cart.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: 40 }}
+                    className="flex gap-4"
+                  >
+                    <div className="w-20 h-24 flex-shrink-0 overflow-hidden bg-muted">
+                      <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 flex flex-col justify-between py-0.5">
+                      <div>
+                        <p className="font-['Cormorant_Garamond'] text-base text-foreground leading-tight">{item.name}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{item.subtitle}</p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center border border-border/40">
+                          <button
+                            onClick={() => updateQty(item.id, -1)}
+                            className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Minus size={10} />
+                          </button>
+                          <span className="w-6 text-center text-xs text-foreground">{item.qty}</span>
+                          <button
+                            onClick={() => updateQty(item.id, 1)}
+                            className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Plus size={10} />
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-primary text-sm font-['Cormorant_Garamond']">{item.price}</span>
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-muted-foreground/40 hover:text-destructive transition-colors"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
+
+            {/* Footer */}
+            {cart.length > 0 && (
+              <div className="px-6 py-5 border-t border-border/40 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">小計</span>
+                  <span className="font-['Cormorant_Garamond'] text-xl text-foreground">
+                    ¥{total.toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-[10px] text-muted-foreground">配送料・税は購入手続き時に計算されます</p>
+                <button className="w-full py-4 bg-primary text-primary-foreground text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+                  購入手続きへ進む
+                </button>
+                <button
+                  onClick={() => setCartOpen(false)}
+                  className="w-full py-3 border border-border/40 text-muted-foreground text-xs tracking-[0.2em] uppercase hover:border-primary/40 hover:text-primary transition-colors"
+                >
+                  買い物を続ける
+                </button>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [initialCategory, setInitialCategory] = useState("すべて");
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
+
+  const addToCart = (product: Omit<CartItem, "qty">) => {
+    setCart((prev) => {
+      const existing = prev.find((i) => i.id === product.id);
+      if (existing) return prev.map((i) => i.id === product.id ? { ...i, qty: i.qty + 1 } : i);
+      return [...prev, { ...product, qty: 1 }];
+    });
+    setCartOpen(true);
+  };
+
+  const removeFromCart = (id: number) => setCart((prev) => prev.filter((i) => i.id !== id));
+
+  const updateQty = (id: number, delta: number) => {
+    setCart((prev) =>
+      prev.flatMap((i) => {
+        if (i.id !== id) return [i];
+        const next = i.qty + delta;
+        return next <= 0 ? [] : [{ ...i, qty: next }];
+      })
+    );
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
 
   return (
-    <NavCtx.Provider value={{ page, setPage, initialCategory, setInitialCategory }}>
+    <NavCtx.Provider value={{ page, setPage, initialCategory, setInitialCategory, cart, addToCart, removeFromCart, updateQty, cartOpen, setCartOpen }}>
       <>
       <style>{`
         @keyframes marquee {
@@ -1161,6 +1340,7 @@ export default function App() {
         body { font-family: 'Jost', sans-serif; }
       `}</style>
 
+      <CartDrawer />
       <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
         <Nav />
         {page === "home" ? (
