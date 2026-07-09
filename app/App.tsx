@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals";
 
 type CartItem = {
   id: number;
@@ -123,7 +123,7 @@ const PRODUCTS = [
     rating: 4.6,
     reviews: 89,
     badge: null,
-    img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1767379462135-1b4eac978a95?w=600&h=700&fit=crop&auto=format",
   },
   {
     id: 6,
@@ -134,7 +134,7 @@ const PRODUCTS = [
     rating: 4.8,
     reviews: 274,
     badge: "人気",
-    img: "https://images.unsplash.com/photo-1527632911563-ee5b6d53465b?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1706067003003-f5d8d518c00b?w=600&h=700&fit=crop&auto=format",
   },
 ];
 
@@ -443,7 +443,10 @@ function Hero() {
                 </span>
                 <span className="absolute inset-0 bg-accent translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
               </button>
-              <button className="px-8 py-4 border border-border text-foreground/70 hover:text-primary hover:border-primary/40 text-xs tracking-[0.2em] uppercase transition-all duration-300">
+              <button
+                onClick={() => setPage("new-arrivals")}
+                className="px-8 py-4 border border-border text-foreground/70 hover:text-primary hover:border-primary/40 text-xs tracking-[0.2em] uppercase transition-all duration-300"
+              >
                 新作を見る
               </button>
             </motion.div>
@@ -928,7 +931,7 @@ const ALL_COLLECTION_PRODUCTS = [
     rating: 4.7,
     reviews: 143,
     badge: "新作",
-    img: "https://images.unsplash.com/photo-1739980296455-3f8d6051ca20?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1670201203129-65c022f0ed8e?w=600&h=700&fit=crop&auto=format",
   },
   {
     id: 8,
@@ -939,7 +942,7 @@ const ALL_COLLECTION_PRODUCTS = [
     rating: 4.6,
     reviews: 198,
     badge: "限定",
-    img: "https://images.unsplash.com/photo-1523634118614-82b2685ee3df?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1503236823255-94609f598e71?w=600&h=700&fit=crop&auto=format",
   },
   {
     id: 9,
@@ -950,7 +953,7 @@ const ALL_COLLECTION_PRODUCTS = [
     rating: 4.9,
     reviews: 87,
     badge: "ベストセラー",
-    img: "https://images.unsplash.com/photo-1600634999623-864991678406?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1774682060997-f8959850a7d4?w=600&h=700&fit=crop&auto=format",
   },
   {
     id: 10,
@@ -961,7 +964,7 @@ const ALL_COLLECTION_PRODUCTS = [
     rating: 4.5,
     reviews: 312,
     badge: null,
-    img: "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1625093742435-6fa192b6fb10?w=600&h=700&fit=crop&auto=format",
   },
   {
     id: 11,
@@ -972,7 +975,7 @@ const ALL_COLLECTION_PRODUCTS = [
     rating: 4.8,
     reviews: 224,
     badge: "人気",
-    img: "https://images.unsplash.com/photo-1527632911563-ee5b6d53465b?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1706067003003-f5d8d518c00b?w=600&h=700&fit=crop&auto=format",
   },
   {
     id: 12,
@@ -983,7 +986,7 @@ const ALL_COLLECTION_PRODUCTS = [
     rating: 4.9,
     reviews: 176,
     badge: null,
-    img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1767379462135-1b4eac978a95?w=600&h=700&fit=crop&auto=format",
   },
 ];
 
@@ -1188,9 +1191,9 @@ const COLLECTION_DETAILS = {
     features: ["ヴィーガン認定", "皮膚科テスト済", "パラベンフリー", "100%天然香料"],
     products: [1, 3, 5, 7, 9, 12].map((id) =>
       [...PRODUCTS, ...([
-        { id: 7, name: "パールグロウ マスク", subtitle: "真珠の輝きパックマスク", price: "¥7,800", category: "スキンケア", rating: 4.7, reviews: 143, badge: "新作", img: "https://images.unsplash.com/photo-1739980296455-3f8d6051ca20?w=600&h=700&fit=crop&auto=format" },
-        { id: 9, name: "ノワール パフューム", subtitle: "オードパルファム 50ml", price: "¥18,000", category: "フレグランス", rating: 4.9, reviews: 87, badge: "ベストセラー", img: "https://images.unsplash.com/photo-1600634999623-864991678406?w=600&h=700&fit=crop&auto=format" },
-        { id: 12, name: "ローズ オイル セラム", subtitle: "バラオイル濃縮美容液", price: "¥14,500", category: "スキンケア", rating: 4.9, reviews: 176, badge: null, img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format" },
+        { id: 7, name: "パールグロウ マスク", subtitle: "真珠の輝きパックマスク", price: "¥7,800", category: "スキンケア", rating: 4.7, reviews: 143, badge: "新作", img: "https://images.unsplash.com/photo-1670201203129-65c022f0ed8e?w=600&h=700&fit=crop&auto=format" },
+        { id: 9, name: "ノワール パフューム", subtitle: "オードパルファム 50ml", price: "¥18,000", category: "フレグランス", rating: 4.9, reviews: 87, badge: "ベストセラー", img: "https://images.unsplash.com/photo-1774682060997-f8959850a7d4?w=600&h=700&fit=crop&auto=format" },
+        { id: 12, name: "ローズ オイル セラム", subtitle: "バラオイル濃縮美容液", price: "¥14,500", category: "スキンケア", rating: 4.9, reviews: 176, badge: null, img: "https://images.unsplash.com/photo-1767379462135-1b4eac978a95?w=600&h=700&fit=crop&auto=format" },
       ])].find((p) => p.id === id)
     ).filter(Boolean),
     steps: [
@@ -1210,9 +1213,9 @@ const COLLECTION_DETAILS = {
     features: ["高発色処方", "12時間持続", "クルエルティフリー", "ヴィーガン認定"],
     products: [2, 4, 6, 8, 10, 11].map((id) =>
       [...PRODUCTS, ...([
-        { id: 8, name: "ゴールド アイライナー", subtitle: "24K ゴールドリキッドライン", price: "¥3,800", category: "アイメイク", rating: 4.6, reviews: 198, badge: "限定", img: "https://images.unsplash.com/photo-1523634118614-82b2685ee3df?w=600&h=700&fit=crop&auto=format" },
+        { id: 8, name: "ゴールド アイライナー", subtitle: "24K ゴールドリキッドライン", price: "¥3,800", category: "アイメイク", rating: 4.6, reviews: 198, badge: "限定", img: "https://images.unsplash.com/photo-1503236823255-94609f598e71?w=600&h=700&fit=crop&auto=format" },
         { id: 10, name: "サテン リップライナー", subtitle: "なめらかなリップライン", price: "¥2,900", category: "リップ", rating: 4.5, reviews: 312, badge: null, img: "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=600&h=700&fit=crop&auto=format" },
-        { id: 11, name: "クリスタル ハイライター", subtitle: "立体感を生む光のハイライト", price: "¥5,600", category: "ベースメイク", rating: 4.8, reviews: 224, badge: "人気", img: "https://images.unsplash.com/photo-1527632911563-ee5b6d53465b?w=600&h=700&fit=crop&auto=format" },
+        { id: 11, name: "クリスタル ハイライター", subtitle: "立体感を生む光のハイライト", price: "¥5,600", category: "ベースメイク", rating: 4.8, reviews: 224, badge: "人気", img: "https://images.unsplash.com/photo-1706067003003-f5d8d518c00b?w=600&h=700&fit=crop&auto=format" },
       ])].find((p) => p.id === id)
     ).filter(Boolean),
     steps: [
@@ -1232,8 +1235,8 @@ const COLLECTION_DETAILS = {
     features: ["グラース産花原料", "アルコールフリーオプション", "持続時間8〜12h", "ガラス製ボトル"],
     products: [9, 1, 5, 12].map((id) =>
       [...PRODUCTS, ...([
-        { id: 9, name: "ノワール パフューム", subtitle: "オードパルファム 50ml", price: "¥18,000", category: "フレグランス", rating: 4.9, reviews: 87, badge: "ベストセラー", img: "https://images.unsplash.com/photo-1600634999623-864991678406?w=600&h=700&fit=crop&auto=format" },
-        { id: 12, name: "ローズ オイル セラム", subtitle: "バラオイル濃縮美容液", price: "¥14,500", category: "スキンケア", rating: 4.9, reviews: 176, badge: null, img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format" },
+        { id: 9, name: "ノワール パフューム", subtitle: "オードパルファム 50ml", price: "¥18,000", category: "フレグランス", rating: 4.9, reviews: 87, badge: "ベストセラー", img: "https://images.unsplash.com/photo-1774682060997-f8959850a7d4?w=600&h=700&fit=crop&auto=format" },
+        { id: 12, name: "ローズ オイル セラム", subtitle: "バラオイル濃縮美容液", price: "¥14,500", category: "スキンケア", rating: 4.9, reviews: 176, badge: null, img: "https://images.unsplash.com/photo-1767379462135-1b4eac978a95?w=600&h=700&fit=crop&auto=format" },
       ])].find((p) => p.id === id)
     ).filter(Boolean),
     steps: [
@@ -1335,6 +1338,136 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
           {(data.products as any[]).map((product, i) => (
             <ProductCard key={product.id} product={product} index={i} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const NEW_ARRIVALS_PRODUCTS = ALL_COLLECTION_PRODUCTS.filter((p) =>
+  ["新作", "限定"].includes(p.badge ?? "")
+).concat(ALL_COLLECTION_PRODUCTS.filter((p) => !["新作", "限定"].includes(p.badge ?? "")).slice(0, 4));
+
+function NewArrivalsPage() {
+  const { setPage, addToCart, wishlist, toggleWish } = useContext(NavCtx);
+  const [activeFilter, setActiveFilter] = useState("すべて");
+  const filters = ["すべて", "スキンケア", "ベースメイク", "リップ", "アイメイク", "フレグランス"];
+
+  const filtered = activeFilter === "すべて"
+    ? NEW_ARRIVALS_PRODUCTS
+    : NEW_ARRIVALS_PRODUCTS.filter((p) => p.category === activeFilter);
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-24 border-b border-border/30">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at 30% 60%, rgba(201,168,76,0.09) 0%, transparent 55%)" }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.025] pointer-events-none"
+          style={{ backgroundImage: "repeating-linear-gradient(90deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 80px)" }}
+        />
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="relative z-10 flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-3">New Arrivals</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-4">
+              今季の<span className="italic gold-shimmer">新作アイテム</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light max-w-lg">
+              季節を纏う、生まれたての美しさ。LUMIÈREが贈る最新コレクションをいち早くご覧ください。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Featured new item */}
+      <div className="max-w-7xl mx-auto px-6 py-16 border-b border-border/20">
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground mb-8">今月の注目新作</p>
+        </FadeUp>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+          <FadeUp className="relative overflow-hidden aspect-[4/5] bg-card">
+            <img
+              src="https://images.unsplash.com/photo-1764694071462-db50e50a3925?w=700&h=900&fit=crop&auto=format"
+              alt="注目新作"
+              className="w-full h-full object-cover"
+            />
+            <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-[9px] tracking-[0.3em] uppercase px-3 py-1.5">
+              NEW
+            </span>
+          </FadeUp>
+          <FadeUp delay={0.15}>
+            <p className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground mb-2">スキンケア</p>
+            <h2 className="font-['Cormorant_Garamond'] text-4xl text-foreground mb-3">パールグロウ マスク</h2>
+            <p className="font-['Cormorant_Garamond'] italic text-lg text-primary mb-5">真珠の輝きパックマスク</p>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose mb-8">
+              希少な淡水真珠エキスと深海コラーゲンを配合した、次世代のシートマスク。
+              わずか15分で肌に光沢と弾力を与え、翌朝のメイクのりを格段に向上させます。
+              週2〜3回の使用で、肌本来の輝きを引き出します。
+            </p>
+            <div className="flex items-center gap-6 mb-8">
+              <span className="font-['Cormorant_Garamond'] text-3xl text-primary">¥7,800</span>
+              <div className="flex gap-0.5">
+                {[1,2,3,4,5].map((s) => (
+                  <Star key={s} size={12} className="fill-[#c9a84c] text-[#c9a84c]" />
+                ))}
+                <span className="text-[10px] text-muted-foreground ml-2">(143件)</span>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => addToCart({ id: 7, name: "パールグロウ マスク", subtitle: "真珠の輝きパックマスク", price: "¥7,800", img: "https://images.unsplash.com/photo-1670201203129-65c022f0ed8e?w=600&h=700&fit=crop&auto=format" })}
+                className="flex-1 py-4 bg-primary text-primary-foreground text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors"
+              >
+                カートに追加
+              </button>
+              <button
+                onClick={() => toggleWish({ id: 7, name: "パールグロウ マスク", subtitle: "真珠の輝きパックマスク", price: "¥7,800", img: "https://images.unsplash.com/photo-1670201203129-65c022f0ed8e?w=600&h=700&fit=crop&auto=format", category: "スキンケア" })}
+                className={`w-14 border flex items-center justify-center transition-colors ${wishlist.some(i => i.id === 7) ? "border-primary/40 text-primary" : "border-border/40 text-muted-foreground hover:text-primary hover:border-primary/40"}`}
+              >
+                <Heart size={16} className={wishlist.some(i => i.id === 7) ? "fill-primary" : ""} />
+              </button>
+            </div>
+          </FadeUp>
+        </div>
+      </div>
+
+      {/* All new items */}
+      <div className="max-w-7xl mx-auto px-6 py-14">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+          <FadeUp>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground mb-1">ラインナップ</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground">新作一覧</h2>
+          </FadeUp>
+          <div className="flex flex-wrap gap-2">
+            {filters.map((f) => (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f)}
+                className={`px-4 py-2 text-[10px] tracking-widest uppercase transition-all duration-300 border ${
+                  activeFilter === f
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border/40 text-muted-foreground hover:border-primary/30 hover:text-primary"
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
+          {filtered.map((product, i) => (
+            <ProductCard key={product.id} product={product as any} index={i} />
           ))}
         </div>
       </div>
@@ -1862,6 +1995,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <CollectionsPage />
+          </motion.div>
+        ) : page === "new-arrivals" ? (
+          <motion.div
+            key="new-arrivals"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <NewArrivalsPage />
           </motion.div>
         ) : page === "brand-story" ? (
           <motion.div
