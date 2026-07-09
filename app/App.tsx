@@ -652,6 +652,7 @@ function ProductCard({ product, index }: { product: (typeof PRODUCTS)[0]; index:
 }
 
 function NewArrivals() {
+  const { setPage, setInitialCategory } = useContext(NavCtx);
   const [activeFilter, setActiveFilter] = useState("すべて");
   const filters = ["すべて", "スキンケア", "ベースメイク", "リップ", "アイメイク"];
 
@@ -694,7 +695,10 @@ function NewArrivals() {
         </div>
 
         <FadeUp className="text-center mt-14">
-          <button className="group inline-flex items-center gap-3 border border-border/40 hover:border-primary/50 px-10 py-4 text-xs tracking-[0.25em] uppercase text-foreground/70 hover:text-primary transition-all duration-300">
+          <button
+            onClick={() => { setInitialCategory("すべて"); setPage("collections"); }}
+            className="group inline-flex items-center gap-3 border border-border/40 hover:border-primary/50 px-10 py-4 text-xs tracking-[0.25em] uppercase text-foreground/70 hover:text-primary transition-all duration-300"
+          >
             すべての商品を見る
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </button>
