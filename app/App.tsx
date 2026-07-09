@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance";
 
 type CartItem = {
   id: number;
@@ -485,7 +485,8 @@ function Hero() {
 }
 
 function Collections() {
-  const collections = [
+  const { setPage } = useContext(NavCtx);
+  const collections: { title: string; subtitle: string; desc: string; img: string; tag: string; col: string; page: Page }[] = [
     {
       title: "スキンリチュアル",
       subtitle: "毎日の儀式",
@@ -493,6 +494,7 @@ function Collections() {
       img: "https://images.unsplash.com/photo-1782034493928-d8410275cfcd?w=700&h=900&fit=crop&auto=format",
       tag: "SKINCARE",
       col: "col-span-1 md:row-span-2",
+      page: "skin-ritual",
     },
     {
       title: "カラードラマ",
@@ -501,6 +503,7 @@ function Collections() {
       img: "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=700&h=400&fit=crop&auto=format",
       tag: "MAKEUP",
       col: "col-span-1",
+      page: "color-drama",
     },
     {
       title: "センシュアル フレグランス",
@@ -509,6 +512,7 @@ function Collections() {
       img: "https://images.unsplash.com/photo-1591375462469-62f189694738?w=700&h=400&fit=crop&auto=format",
       tag: "FRAGRANCE",
       col: "col-span-1",
+      page: "fragrance",
     },
   ];
 
@@ -536,7 +540,10 @@ function Collections() {
                 <p className="text-[9px] tracking-[0.4em] uppercase text-primary/80 mb-2">{c.tag}</p>
                 <h3 className="font-['Cormorant_Garamond'] text-2xl text-white mb-1">{c.title}</h3>
                 <p className="text-xs text-white/60 font-['Jost'] font-light mb-4">{c.desc}</p>
-                <button className="flex items-center gap-2 text-[10px] tracking-widest uppercase text-primary hover:gap-3 transition-all duration-300">
+                <button
+                  onClick={() => setPage(c.page)}
+                  className="flex items-center gap-2 text-[10px] tracking-widest uppercase text-primary hover:gap-3 transition-all duration-300"
+                >
                   詳しく見る <ChevronRight size={12} />
                 </button>
               </div>
@@ -1135,6 +1142,171 @@ function CollectionsPage() {
   );
 }
 
+const COLLECTION_DETAILS = {
+  "skin-ritual": {
+    title: "スキンリチュアル",
+    subtitle: "SKIN RITUAL",
+    tagline: "毎日の儀式で、肌を変える",
+    desc: "自然由来の最高級成分を厳選し、科学的に処方されたLUMIÈREのスキンケアライン。あなたの肌が本来持つ再生力を最大限に引き出し、光輝く素肌へと導きます。毎朝・毎夜のルーティンを、特別な美容儀式に変えましょう。",
+    heroImg: "https://images.unsplash.com/photo-1777840347880-747242e0db00?w=1200&h=700&fit=crop&auto=format",
+    accentColor: "#c9a84c",
+    features: ["ヴィーガン認定", "皮膚科テスト済", "パラベンフリー", "100%天然香料"],
+    products: [1, 3, 5, 7, 9, 12].map((id) =>
+      [...PRODUCTS, ...([
+        { id: 7, name: "パールグロウ マスク", subtitle: "真珠の輝きパックマスク", price: "¥7,800", category: "スキンケア", rating: 4.7, reviews: 143, badge: "新作", img: "https://images.unsplash.com/photo-1739980296455-3f8d6051ca20?w=600&h=700&fit=crop&auto=format" },
+        { id: 9, name: "ノワール パフューム", subtitle: "オードパルファム 50ml", price: "¥18,000", category: "フレグランス", rating: 4.9, reviews: 87, badge: "ベストセラー", img: "https://images.unsplash.com/photo-1600634999623-864991678406?w=600&h=700&fit=crop&auto=format" },
+        { id: 12, name: "ローズ オイル セラム", subtitle: "バラオイル濃縮美容液", price: "¥14,500", category: "スキンケア", rating: 4.9, reviews: 176, badge: null, img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format" },
+      ])].find((p) => p.id === id)
+    ).filter(Boolean),
+    steps: [
+      { step: "01", name: "クレンジング", desc: "やさしく汚れを落とし、毛穴を清潔に" },
+      { step: "02", name: "トナー", desc: "肌のpHバランスを整え、次のケアを吸収しやすく" },
+      { step: "03", name: "セラム", desc: "高濃度の美容成分を肌の奥深くに届ける" },
+      { step: "04", name: "モイスチャライザー", desc: "うるおいをしっかり閉じ込め、バリア機能を強化" },
+    ],
+  },
+  "color-drama": {
+    title: "カラードラマ",
+    subtitle: "COLOR DRAMA",
+    tagline: "色彩で、あなただけの物語を描く",
+    desc: "大胆にして繊細、華やかにして上品。LUMIÈREのメイクアップコレクションは、あなたの内側にある創造性を解き放ちます。一瞬で気分を変える発色、長時間続く美しさ、そして肌に優しいクリーンな処方。色は、最もパーソナルな表現手段です。",
+    heroImg: "https://images.unsplash.com/photo-1526045405698-cf8b8acc4aaf?w=1200&h=700&fit=crop&auto=format",
+    accentColor: "#b5446e",
+    features: ["高発色処方", "12時間持続", "クルエルティフリー", "ヴィーガン認定"],
+    products: [2, 4, 6, 8, 10, 11].map((id) =>
+      [...PRODUCTS, ...([
+        { id: 8, name: "ゴールド アイライナー", subtitle: "24K ゴールドリキッドライン", price: "¥3,800", category: "アイメイク", rating: 4.6, reviews: 198, badge: "限定", img: "https://images.unsplash.com/photo-1523634118614-82b2685ee3df?w=600&h=700&fit=crop&auto=format" },
+        { id: 10, name: "サテン リップライナー", subtitle: "なめらかなリップライン", price: "¥2,900", category: "リップ", rating: 4.5, reviews: 312, badge: null, img: "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=600&h=700&fit=crop&auto=format" },
+        { id: 11, name: "クリスタル ハイライター", subtitle: "立体感を生む光のハイライト", price: "¥5,600", category: "ベースメイク", rating: 4.8, reviews: 224, badge: "人気", img: "https://images.unsplash.com/photo-1527632911563-ee5b6d53465b?w=600&h=700&fit=crop&auto=format" },
+      ])].find((p) => p.id === id)
+    ).filter(Boolean),
+    steps: [
+      { step: "01", name: "ベース", desc: "シルクのような肌なじみのプライマーで土台を整える" },
+      { step: "02", name: "ファンデーション", desc: "第二の肌のように自然にカバー" },
+      { step: "03", name: "アイメイク", desc: "目元に深みと輝きを加えて表情を引き立てる" },
+      { step: "04", name: "リップ", desc: "仕上げは唇に鮮やかな色と艶をプラス" },
+    ],
+  },
+  "fragrance": {
+    title: "センシュアル フレグランス",
+    subtitle: "SENSUAL FRAGRANCE",
+    tagline: "香りは、魂の言葉",
+    desc: "グラースの花畑、東洋のスパイス、深海の塩気——世界中から集めた希少な原料が織りなす、LUMIÈREのフレグランスコレクション。香りは記憶と感情に直接語りかけます。あなたの存在感を、目には見えない香りで表現してください。",
+    heroImg: "https://images.unsplash.com/photo-1591375462469-62f189694738?w=1200&h=700&fit=crop&auto=format",
+    accentColor: "#7a5aaa",
+    features: ["グラース産花原料", "アルコールフリーオプション", "持続時間8〜12h", "ガラス製ボトル"],
+    products: [9, 1, 5, 12].map((id) =>
+      [...PRODUCTS, ...([
+        { id: 9, name: "ノワール パフューム", subtitle: "オードパルファム 50ml", price: "¥18,000", category: "フレグランス", rating: 4.9, reviews: 87, badge: "ベストセラー", img: "https://images.unsplash.com/photo-1600634999623-864991678406?w=600&h=700&fit=crop&auto=format" },
+        { id: 12, name: "ローズ オイル セラム", subtitle: "バラオイル濃縮美容液", price: "¥14,500", category: "スキンケア", rating: 4.9, reviews: 176, badge: null, img: "https://images.unsplash.com/photo-1590156220728-bea5ba090f82?w=600&h=700&fit=crop&auto=format" },
+      ])].find((p) => p.id === id)
+    ).filter(Boolean),
+    steps: [
+      { step: "01", name: "トップノート", desc: "最初の10〜15分に感じる軽やかな印象" },
+      { step: "02", name: "ミドルノート", desc: "香りの核心、30分〜数時間持続する本体" },
+      { step: "03", name: "ベースノート", desc: "時間とともに深まる、最も長持ちする香り" },
+      { step: "04", name: "アプリケーション", desc: "手首・首筋・耳の後ろに軽く一プッシュ" },
+    ],
+  },
+} as const;
+
+function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" | "color-drama" | "fragrance" }) {
+  const { setPage, addToCart } = useContext(NavCtx);
+  const data = COLLECTION_DETAILS[collectionKey];
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Hero */}
+      <div className="relative h-[70vh] min-h-[480px] overflow-hidden">
+        <img
+          src={data.heroImg}
+          alt={data.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-black/40 to-black/20" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: `radial-gradient(ellipse at top right, ${data.accentColor}22, transparent 60%)` }}
+        />
+
+        <div className="absolute inset-0 flex flex-col justify-end px-6 pb-12 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <button
+              onClick={() => setPage("home")}
+              className="relative z-10 flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-white/50 hover:text-primary transition-colors mb-8"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase mb-3" style={{ color: data.accentColor }}>
+              {data.subtitle}
+            </p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-7xl text-white font-medium mb-4 leading-tight">
+              {data.title}
+            </h1>
+            <p className="font-['Cormorant_Garamond'] italic text-xl text-white/60">{data.tagline}</p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* About */}
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-24">
+          <FadeUp>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose">{data.desc}</p>
+            <div className="flex flex-wrap gap-3 mt-8">
+              {data.features.map((f) => (
+                <span
+                  key={f}
+                  className="text-[9px] tracking-[0.25em] uppercase px-3 py-1.5 border"
+                  style={{ borderColor: `${data.accentColor}40`, color: data.accentColor }}
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
+          </FadeUp>
+
+          {/* Steps */}
+          <FadeUp delay={0.15}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground mb-6">HOW TO USE</p>
+            <div className="space-y-5">
+              {data.steps.map((s) => (
+                <div key={s.step} className="flex gap-5 items-start border-b border-border/20 pb-5">
+                  <span className="font-['Cormorant_Garamond'] text-3xl leading-none" style={{ color: data.accentColor }}>
+                    {s.step}
+                  </span>
+                  <div>
+                    <p className="text-sm text-foreground font-medium tracking-wider mb-1">{s.name}</p>
+                    <p className="text-xs text-muted-foreground font-['Jost'] font-light">{s.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+
+        {/* Products */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground mb-2">ラインナップ</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl md:text-4xl text-foreground mb-10">
+            <span className="italic" style={{ color: data.accentColor }}>{data.title}</span> の商品
+          </h2>
+        </FadeUp>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
+          {(data.products as any[]).map((product, i) => (
+            <ProductCard key={product.id} product={product} index={i} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CartDrawer() {
   const { cart, cartOpen, setCartOpen, removeFromCart, updateQty } = useContext(NavCtx);
   const total = cart.reduce((sum, i) => {
@@ -1358,7 +1530,7 @@ export default function App() {
             <Newsletter />
             <Footer />
           </motion.div>
-        ) : (
+        ) : page === "collections" ? (
           <motion.div
             key="collections"
             initial={{ opacity: 0 }}
@@ -1366,6 +1538,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <CollectionsPage />
+          </motion.div>
+        ) : (
+          <motion.div
+            key={page}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <CollectionDetailPage collectionKey={page as "skin-ritual" | "color-drama" | "fragrance"} />
           </motion.div>
         )}
       </div>
