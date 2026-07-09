@@ -28,6 +28,15 @@ type CartItem = {
   qty: number;
 };
 
+type WishItem = {
+  id: number;
+  name: string;
+  subtitle: string;
+  price: string;
+  img: string;
+  category: string;
+};
+
 const NavCtx = createContext<{
   page: Page;
   setPage: (p: Page) => void;
@@ -39,6 +48,10 @@ const NavCtx = createContext<{
   updateQty: (id: number, delta: number) => void;
   cartOpen: boolean;
   setCartOpen: (v: boolean) => void;
+  wishlist: WishItem[];
+  toggleWish: (product: WishItem) => void;
+  wishOpen: boolean;
+  setWishOpen: (v: boolean) => void;
 }>({
   page: "home",
   setPage: () => {},
@@ -50,6 +63,10 @@ const NavCtx = createContext<{
   updateQty: () => {},
   cartOpen: false,
   setCartOpen: () => {},
+  wishlist: [],
+  toggleWish: () => {},
+  wishOpen: false,
+  setWishOpen: () => {},
 });
 
 const PRODUCTS = [
@@ -181,7 +198,7 @@ function StarRating({ rating }: { rating: number }) {
 function Nav() {
   const scrolled = useScrolled();
   const [open, setOpen] = useState(false);
-  const { page, setPage, setInitialCategory, cart, setCartOpen } = useContext(NavCtx);
+  const { page, setPage, setInitialCategory, cart, setCartOpen, wishlist, setWishOpen } = useContext(NavCtx);
   const cartCount = cart.reduce((sum, i) => sum + i.qty, 0);
 
   const NAV_ITEMS: { label: string; category: string }[] = [
@@ -241,8 +258,18 @@ function Nav() {
             <button className="text-foreground/60 hover:text-primary transition-colors">
               <Search size={18} />
             </button>
-            <button className="text-foreground/60 hover:text-primary transition-colors">
-              <Heart size={18} />
+            <button onClick={() => setWishOpen(true)} className="relative text-foreground/60 hover:text-primary transition-colors">
+              <Heart size={18} className={wishlist.length > 0 ? "fill-accent text-accent" : ""} />
+              {wishlist.length > 0 && (
+                <motion.span
+                  key={wishlist.length}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-medium"
+                >
+                  {wishlist.length}
+                </motion.span>
+              )}
             </button>
             <button onClick={() => setCartOpen(true)} className="relative text-foreground/60 hover:text-primary transition-colors">
               <ShoppingBag size={18} />
@@ -556,9 +583,9 @@ function Collections() {
 }
 
 function ProductCard({ product, index }: { product: (typeof PRODUCTS)[0]; index: number }) {
-  const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
-  const { addToCart } = useContext(NavCtx);
+  const { addToCart, wishlist, toggleWish } = useContext(NavCtx);
+  const liked = wishlist.some((i) => i.id === product.id);
 
   const handleAdd = () => {
     addToCart({ id: product.id, name: product.name, subtitle: product.subtitle, price: product.price, img: product.img });
@@ -581,7 +608,7 @@ function ProductCard({ product, index }: { product: (typeof PRODUCTS)[0]; index:
             </span>
           )}
           <button
-            onClick={() => setLiked(!liked)}
+            onClick={() => toggleWish({ id: product.id, name: product.name, subtitle: product.subtitle, price: product.price, img: product.img, category: product.category })}
             className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-black/30 backdrop-blur-sm hover:bg-black/50 transition-colors"
           >
             <Heart
@@ -1307,6 +1334,113 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
   );
 }
 
+function WishlistDrawer() {
+  const { wishlist, toggleWish, wishOpen, setWishOpen, addToCart, setCartOpen } = useContext(NavCtx);
+
+  const handleMoveToCart = (item: WishItem) => {
+    addToCart({ id: item.id, name: item.name, subtitle: item.subtitle, price: item.price, img: item.img });
+    toggleWish(item);
+    setWishOpen(false);
+    setCartOpen(true);
+  };
+
+  return (
+    <>
+      {wishOpen && (
+        <div className="fixed inset-0 z-[200] flex justify-end">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setWishOpen(false)} />
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", damping: 30, stiffness: 220 }}
+            className="relative w-full max-w-md bg-card flex flex-col h-full shadow-2xl"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-border/40">
+              <div>
+                <h2 className="font-['Cormorant_Garamond'] text-2xl text-foreground">お気に入り</h2>
+                <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mt-0.5">
+                  {wishlist.length} 点
+                </p>
+              </div>
+              <button onClick={() => setWishOpen(false)} className="text-muted-foreground hover:text-primary transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Items */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+              {wishlist.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+                  <Heart size={40} className="text-muted-foreground/30" />
+                  <p className="text-sm text-muted-foreground tracking-widest">お気に入りはまだありません</p>
+                </div>
+              ) : (
+                wishlist.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex gap-4 border-b border-border/20 pb-4"
+                  >
+                    <div className="w-20 h-24 flex-shrink-0 overflow-hidden bg-muted">
+                      <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 flex flex-col justify-between py-0.5">
+                      <div>
+                        <p className="text-[9px] tracking-[0.25em] uppercase text-muted-foreground mb-0.5">{item.category}</p>
+                        <p className="font-['Cormorant_Garamond'] text-base text-foreground leading-tight">{item.name}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{item.subtitle}</p>
+                        <p className="text-primary text-sm font-['Cormorant_Garamond'] mt-1">{item.price}</p>
+                      </div>
+                      <div className="flex items-center gap-3 mt-2">
+                        <button
+                          onClick={() => handleMoveToCart(item)}
+                          className="flex-1 py-2 bg-primary text-primary-foreground text-[9px] tracking-[0.2em] uppercase hover:bg-accent transition-colors"
+                        >
+                          カートに追加
+                        </button>
+                        <button
+                          onClick={() => toggleWish(item)}
+                          className="text-muted-foreground/40 hover:text-destructive transition-colors"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
+
+            {wishlist.length > 0 && (
+              <div className="px-6 py-5 border-t border-border/40 space-y-3">
+                <button
+                  onClick={() => {
+                    wishlist.forEach((item) => addToCart({ id: item.id, name: item.name, subtitle: item.subtitle, price: item.price, img: item.img }));
+                    setWishOpen(false);
+                    setCartOpen(true);
+                  }}
+                  className="w-full py-4 bg-primary text-primary-foreground text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+                >
+                  すべてカートに追加
+                </button>
+                <button
+                  onClick={() => setWishOpen(false)}
+                  className="w-full py-3 border border-border/40 text-muted-foreground text-xs tracking-[0.2em] uppercase hover:border-primary/40 hover:text-primary transition-colors"
+                >
+                  買い物を続ける
+                </button>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
+    </>
+  );
+}
+
 function CartDrawer() {
   const { cart, cartOpen, setCartOpen, removeFromCart, updateQty } = useContext(NavCtx);
   const total = cart.reduce((sum, i) => {
@@ -1435,6 +1569,16 @@ export default function App() {
   const [initialCategory, setInitialCategory] = useState("すべて");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [wishlist, setWishlist] = useState<WishItem[]>([]);
+  const [wishOpen, setWishOpen] = useState(false);
+
+  const toggleWish = (product: WishItem) => {
+    setWishlist((prev) =>
+      prev.find((i) => i.id === product.id)
+        ? prev.filter((i) => i.id !== product.id)
+        : [...prev, product]
+    );
+  };
 
   const addToCart = (product: Omit<CartItem, "qty">) => {
     setCart((prev) => {
@@ -1462,7 +1606,7 @@ export default function App() {
   }, [page]);
 
   return (
-    <NavCtx.Provider value={{ page, setPage, initialCategory, setInitialCategory, cart, addToCart, removeFromCart, updateQty, cartOpen, setCartOpen }}>
+    <NavCtx.Provider value={{ page, setPage, initialCategory, setInitialCategory, cart, addToCart, removeFromCart, updateQty, cartOpen, setCartOpen, wishlist, toggleWish, wishOpen, setWishOpen }}>
       <>
       <style>{`
         @keyframes marquee {
@@ -1512,6 +1656,7 @@ export default function App() {
         body { font-family: 'Jost', sans-serif; }
       `}</style>
 
+      <WishlistDrawer />
       <CartDrawer />
       <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
         <Nav />
