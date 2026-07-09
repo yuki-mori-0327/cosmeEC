@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story";
 
 type CartItem = {
   id: number;
@@ -709,10 +709,11 @@ function NewArrivals() {
 }
 
 function BrandStory() {
+  const { setPage } = useContext(NavCtx);
   return (
     <section className="relative overflow-hidden py-32">
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
         style={{
           backgroundImage: "radial-gradient(circle, #d4967a 1px, transparent 1px)",
           backgroundSize: "40px 40px",
@@ -777,7 +778,10 @@ function BrandStory() {
               </div>
             ))}
           </div>
-          <button className="group flex items-center gap-3 text-xs tracking-[0.25em] uppercase text-primary hover:gap-4 transition-all duration-300">
+          <button
+            onClick={() => setPage("brand-story")}
+            className="group flex items-center gap-3 text-xs tracking-[0.25em] uppercase text-primary hover:gap-4 transition-all duration-300"
+          >
             ブランドストーリーを読む <ArrowRight size={14} />
           </button>
         </FadeUp>
@@ -1338,6 +1342,177 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
   );
 }
 
+function BrandStoryPage() {
+  const { setPage } = useContext(NavCtx);
+
+  const milestones = [
+    { year: "2008", title: "プロヴァンスで誕生", desc: "南フランスのグラースで、調香師のソフィー・ルブランが小さな工房を開く。最初の香水「Lumière No.1」が地元の愛好家に瞬く間に広まった。" },
+    { year: "2012", title: "スキンケアラインの誕生", desc: "プロヴァンスの野生ラベンダーとローズヒップを原料に、初のスキンケアコレクション「スキンリチュアル」を発表。植物学者との共同研究が始まる。" },
+    { year: "2016", title: "ヴィーガン認定取得", desc: "全製品においてクルエルティフリー・ヴィーガン認定を世界に先駆けて取得。サステナブルパッケージングへの移行も同年に完了。" },
+    { year: "2019", title: "アジア市場へ進出", desc: "東京・ソウル・上海に旗艦店をオープン。アジアの薬草学とLUMIÈREのフレンチビューティーが融合した限定コレクションが話題に。" },
+    { year: "2022", title: "再生農業パートナーシップ", desc: "農家と直接契約を結び、再生農業で育てた原料のみを使用する「ファームトゥフェイス」プログラムを始動。カーボンネガティブを達成。" },
+    { year: "2024", title: "次の16年へ", desc: "世界50カ国以上で愛されるブランドへと成長。初心であるプロヴァンスの小さな工房の精神を守りながら、美しさの未来を切り開く。" },
+  ];
+
+  const values = [
+    { title: "Clean Beauty", desc: "有害な化学物質は一切使用しません。すべての成分を開示し、あなたが何を肌に塗るのかを常に知ることができます。", icon: "✦" },
+    { title: "Sustainability", desc: "パッケージは100%リサイクル可能または生分解性。工場は再生可能エネルギーで稼働し、廃水はゼロです。", icon: "◈" },
+    { title: "Transparency", desc: "サプライチェーンから店頭まで、すべての工程を公開。あなたが信頼できるブランドであり続けることが使命です。", icon: "◇" },
+    { title: "Community", desc: "売上の1%を世界中の女性起業家支援プログラムに寄付。美しさは、社会をより良くする力を持っています。", icon: "○" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-28 border-b border-border/30">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 60%)" }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{ backgroundImage: "repeating-linear-gradient(45deg, #c9a84c 0px, #c9a84c 1px, transparent 1px, transparent 40px)" }}
+        />
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="relative z-10 inline-flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-10"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Our Story</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-7xl text-foreground font-medium leading-tight mb-6">
+              美しさを通じて、<br />
+              <span className="italic gold-shimmer">世界をより良く</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl mx-auto">
+              2008年、南フランスのプロヴァンスで生まれたLUMIÈREは、
+              自然と科学の調和という一つの信念から始まりました。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Founder */}
+      <div className="max-w-7xl mx-auto px-6 py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-28">
+          <FadeUp className="relative">
+            <img
+              src="https://images.unsplash.com/photo-1763503839418-2b45c3d7a3c3?w=600&h=700&fit=crop&auto=format"
+              alt="Founder"
+              className="w-full object-cover"
+              style={{ aspectRatio: "4/5" }}
+            />
+            <div className="absolute -bottom-4 -right-4 border border-primary/20 w-full h-full pointer-events-none" style={{ zIndex: -1 }} />
+          </FadeUp>
+          <FadeUp delay={0.15}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4">Founder's Message</p>
+            <h2 className="font-['Cormorant_Garamond'] text-4xl text-foreground leading-tight mb-6">
+              「美しさとは、<br />
+              <span className="italic text-primary">自分を愛すること</span>から始まる」
+            </h2>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose mb-4">
+              私がLUMIÈREを創設したのは、化粧品業界への疑問からでした。なぜ私たちは、肌に何を塗っているのか知らなければならないのでしょうか。なぜ美しくなるために地球を傷つけなければならないのでしょうか。
+            </p>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose mb-8">
+              プロヴァンスの野原で育った私は、自然の力を信じています。ラベンダーの一滴、バラの花びら一枚に、科学では測れない魔法が宿っています。LUMIÈREはその魔法を、すべての人に届けるために存在します。
+            </p>
+            <div className="border-l-2 border-primary/40 pl-6">
+              <p className="font-['Cormorant_Garamond'] italic text-xl text-foreground">Sophie Leblanc</p>
+              <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">Founder & Creative Director</p>
+            </div>
+          </FadeUp>
+        </div>
+
+        {/* Stats */}
+        <FadeUp>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border/30 border border-border/30 mb-28">
+            {[
+              { num: "2008", label: "創業年" },
+              { num: "98%", label: "天然成分使用率" },
+              { num: "50+", label: "販売国数" },
+              { num: "0", label: "カーボン排出量" },
+            ].map((s) => (
+              <div key={s.label} className="bg-background px-8 py-10 text-center">
+                <p className="font-['Cormorant_Garamond'] text-4xl md:text-5xl text-primary mb-2">{s.num}</p>
+                <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* Timeline */}
+        <FadeUp className="mb-28">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground mb-2">History</p>
+          <h2 className="font-['Cormorant_Garamond'] text-4xl text-foreground mb-14">
+            LUMIÈREの<span className="italic text-primary">歩み</span>
+          </h2>
+          <div className="relative">
+            <div className="absolute left-[60px] md:left-1/2 top-0 bottom-0 w-px bg-border/40" />
+            <div className="space-y-12">
+              {milestones.map((m, i) => (
+                <motion.div
+                  key={m.year}
+                  initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.7, delay: i * 0.05 }}
+                  className={`relative flex gap-8 md:gap-0 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
+                >
+                  <div className={`hidden md:block w-1/2 ${i % 2 === 0 ? "pr-16 text-right" : "pl-16"}`}>
+                    <p className="font-['Cormorant_Garamond'] text-5xl text-primary/20">{m.year}</p>
+                    {i % 2 !== 0 && (
+                      <>
+                        <p className="font-['Cormorant_Garamond'] text-xl text-foreground mb-2">{m.title}</p>
+                        <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{m.desc}</p>
+                      </>
+                    )}
+                    {i % 2 === 0 && (
+                      <>
+                        <p className="font-['Cormorant_Garamond'] text-xl text-foreground mb-2">{m.title}</p>
+                        <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{m.desc}</p>
+                      </>
+                    )}
+                  </div>
+                  {/* Dot */}
+                  <div className="absolute left-[52px] md:left-1/2 top-2 w-4 h-4 -translate-x-1/2 border-2 border-primary bg-background rounded-full" />
+                  {/* Mobile */}
+                  <div className="pl-20 md:hidden">
+                    <p className="font-['Cormorant_Garamond'] text-3xl text-primary/30 mb-1">{m.year}</p>
+                    <p className="font-['Cormorant_Garamond'] text-lg text-foreground mb-1">{m.title}</p>
+                    <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{m.desc}</p>
+                  </div>
+                  <div className="hidden md:block w-1/2" />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* Values */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground mb-2">Our Values</p>
+          <h2 className="font-['Cormorant_Garamond'] text-4xl text-foreground mb-10">
+            私たちが<span className="italic text-primary">大切にすること</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {values.map((v, i) => (
+              <FadeUp key={v.title} delay={i * 0.1}>
+                <div className="border border-border/30 p-8 hover:border-primary/30 transition-colors duration-500 group">
+                  <p className="text-primary text-2xl mb-4">{v.icon}</p>
+                  <h3 className="font-['Cormorant_Garamond'] text-2xl text-foreground mb-3">{v.title}</h3>
+                  <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose">{v.desc}</p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </FadeUp>
+      </div>
+    </div>
+  );
+}
+
 function WishlistDrawer() {
   const { wishlist, toggleWish, wishOpen, setWishOpen, addToCart, setCartOpen } = useContext(NavCtx);
 
@@ -1687,6 +1862,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <CollectionsPage />
+          </motion.div>
+        ) : page === "brand-story" ? (
+          <motion.div
+            key="brand-story"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <BrandStoryPage />
           </motion.div>
         ) : (
           <motion.div
