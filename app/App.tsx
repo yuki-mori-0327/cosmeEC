@@ -559,7 +559,7 @@ function Collections() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {collections.map((c, i) => (
           <FadeUp key={c.title} delay={i * 0.15} className={c.col}>
-            <div className="group relative overflow-hidden cursor-pointer h-full min-h-[280px] md:min-h-[320px]">
+            <div onClick={() => setPage(c.page)} className="group relative overflow-hidden cursor-pointer h-full min-h-[280px] md:min-h-[320px]">
               <img
                 src={c.img}
                 alt={c.title}
