@@ -859,6 +859,18 @@ function Newsletter() {
 }
 
 function Footer() {
+  const { setPage, setInitialCategory } = useContext(NavCtx);
+
+  const handleShoppingLink = (label: string) => {
+    const map: Record<string, { page: Page; category: string }> = {
+      "スキンケア":   { page: "collections", category: "スキンケア" },
+      "メイクアップ": { page: "collections", category: "すべて" },
+      "フレグランス": { page: "collections", category: "フレグランス" },
+      "ギフトセット": { page: "collections", category: "すべて" },
+    };
+    const dest = map[label];
+    if (dest) { setInitialCategory(dest.category); setPage(dest.page); }
+  };
   return (
     <footer className="border-t border-border/30 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-6">
@@ -875,14 +887,17 @@ function Footer() {
             {
               title: "ショッピング",
               links: ["スキンケア", "メイクアップ", "フレグランス", "ギフトセット"],
+              shopping: true,
             },
             {
               title: "サポート",
               links: ["よくある質問", "配送について", "返品・交換", "お問い合わせ"],
+              shopping: false,
             },
             {
               title: "ブランド",
               links: ["私たちについて", "サステナビリティ", "採用情報", "プレス"],
+              shopping: false,
             },
           ].map((col) => (
             <div key={col.title}>
@@ -892,6 +907,7 @@ function Footer() {
                   <li key={link}>
                     <a
                       href="#"
+                      onClick={col.shopping ? (e) => { e.preventDefault(); handleShoppingLink(link); } : undefined}
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
                     >
                       {link}
