@@ -52,6 +52,8 @@ const NavCtx = createContext<{
   toggleWish: (product: WishItem) => void;
   wishOpen: boolean;
   setWishOpen: (v: boolean) => void;
+  searchOpen: boolean;
+  setSearchOpen: (v: boolean) => void;
 }>({
   page: "home",
   setPage: () => {},
@@ -67,6 +69,8 @@ const NavCtx = createContext<{
   toggleWish: () => {},
   wishOpen: false,
   setWishOpen: () => {},
+  searchOpen: false,
+  setSearchOpen: () => {},
 });
 
 const PRODUCTS = [
@@ -198,7 +202,7 @@ function StarRating({ rating }: { rating: number }) {
 function Nav() {
   const scrolled = useScrolled();
   const [open, setOpen] = useState(false);
-  const { page, setPage, setInitialCategory, cart, setCartOpen, wishlist, setWishOpen } = useContext(NavCtx);
+  const { page, setPage, setInitialCategory, cart, setCartOpen, wishlist, setWishOpen, setSearchOpen } = useContext(NavCtx);
   const cartCount = cart.reduce((sum, i) => sum + i.qty, 0);
 
   const NAV_ITEMS: { label: string; category: string }[] = [
@@ -255,7 +259,7 @@ function Nav() {
           </button>
 
           <div className="flex items-center gap-5">
-            <button className="text-foreground/60 hover:text-primary transition-colors">
+            <button onClick={() => setSearchOpen(true)} className="text-foreground/60 hover:text-primary transition-colors">
               <Search size={18} />
             </button>
             <button onClick={() => setWishOpen(true)} className="relative text-foreground/60 hover:text-primary transition-colors">
@@ -1646,6 +1650,165 @@ function BrandStoryPage() {
   );
 }
 
+const SEARCH_TAGS: Record<number, string[]> = {
+  1: ["セラム", "美容液", "スキンケア", "ルミナス", "輝き", "保湿"],
+  2: ["リップ", "口紅", "ヴェルヴェット", "ルージュ", "唇", "メイク"],
+  3: ["プライマー", "ベース", "下地", "ファンデ", "グロウ", "化粧下地"],
+  4: ["アイシャドウ", "パレット", "アイメイク", "夕暮れ", "目", "カラー"],
+  5: ["トナー", "化粧水", "ミスト", "ローズ", "保湿", "うるおい"],
+  6: ["ファンデーション", "リキッド", "ベースメイク", "カバー", "肌"],
+  7: ["マスク", "パック", "フェイスマスク", "パール", "真珠", "スキンケア"],
+  8: ["アイライナー", "アイライン", "ゴールド", "目元", "アイメイク"],
+  9: ["香水", "パフューム", "フレグランス", "ノワール", "香り"],
+  10: ["リップライナー", "リップ", "口紅", "サテン", "唇"],
+  11: ["ハイライター", "ハイライト", "輝き", "シマー", "クリスタル"],
+  12: ["セラム", "美容液", "ローズ", "バラ", "オイル", "スキンケア"],
+};
+
+function SearchModal() {
+  const { searchOpen, setSearchOpen, addToCart, wishlist, toggleWish } = useContext(NavCtx);
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => inputRef.current?.focus(), 80);
+    else setQuery("");
+  }, [searchOpen]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setSearchOpen(false); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [setSearchOpen]);
+
+  const results = query.trim().length === 0 ? [] : ALL_COLLECTION_PRODUCTS.filter((p) => {
+    const q = query.toLowerCase();
+    const tags = SEARCH_TAGS[p.id] ?? [];
+    return (
+      p.name.toLowerCase().includes(q) ||
+      p.subtitle.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      tags.some((t) => t.includes(q))
+    );
+  });
+
+  const POPULAR = ["セラム", "リップ", "アイシャドウ", "香水", "ファンデーション", "マスク"];
+
+  if (!searchOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[300] flex flex-col">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setSearchOpen(false)} />
+
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 bg-card border-b border-border/40 shadow-2xl"
+      >
+        {/* Search input */}
+        <div className="max-w-3xl mx-auto px-6 py-6">
+          <div className="flex items-center gap-4 border-b border-border/50 pb-5">
+            <Search size={18} className="text-primary flex-shrink-0" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="商品名、カテゴリー、キーワードで検索..."
+              className="flex-1 bg-transparent text-foreground text-lg placeholder:text-muted-foreground/40 focus:outline-none font-['Jost'] font-light"
+            />
+            {query && (
+              <button onClick={() => setQuery("")} className="text-muted-foreground hover:text-primary transition-colors">
+                <X size={16} />
+              </button>
+            )}
+            <button onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-primary transition-colors ml-2">
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Popular tags */}
+          {!query && (
+            <div className="pt-4">
+              <p className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground mb-3">人気のキーワード</p>
+              <div className="flex flex-wrap gap-2">
+                {POPULAR.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => setQuery(tag)}
+                    className="px-3 py-1.5 border border-border/40 text-[10px] tracking-widest text-muted-foreground hover:border-primary/50 hover:text-primary transition-all"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Results */}
+          {query && (
+            <div className="pt-4 max-h-[60vh] overflow-y-auto">
+              {results.length === 0 ? (
+                <div className="py-10 text-center">
+                  <p className="text-sm text-muted-foreground">「{query}」に一致する商品が見つかりませんでした</p>
+                  <p className="text-[10px] text-muted-foreground/50 mt-2 tracking-wider">別のキーワードをお試しください</p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-[9px] tracking-[0.35em] uppercase text-muted-foreground mb-4">
+                    {results.length}件の検索結果
+                  </p>
+                  <div className="space-y-3 pb-2">
+                    {results.map((product, i) => {
+                      const liked = wishlist.some((w) => w.id === product.id);
+                      return (
+                        <motion.div
+                          key={product.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.04 }}
+                          className="flex gap-4 p-3 hover:bg-muted/30 transition-colors group"
+                        >
+                          <div className="w-16 h-20 flex-shrink-0 overflow-hidden bg-muted">
+                            <img src={`${product.img.split("?")[0]}?w=120&h=150&fit=crop&auto=format`} alt={product.name} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[9px] tracking-[0.25em] uppercase text-muted-foreground">{product.category}</p>
+                            <p className="font-['Cormorant_Garamond'] text-base text-foreground mt-0.5">{product.name}</p>
+                            <p className="text-[10px] text-muted-foreground font-light">{product.subtitle}</p>
+                            <p className="text-primary text-sm font-['Cormorant_Garamond'] mt-1">{product.price}</p>
+                          </div>
+                          <div className="flex flex-col items-end justify-between py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => toggleWish({ id: product.id, name: product.name, subtitle: product.subtitle, price: product.price, img: product.img, category: product.category })}
+                              className={liked ? "text-primary" : "text-muted-foreground hover:text-primary transition-colors"}
+                            >
+                              <Heart size={14} className={liked ? "fill-primary" : ""} />
+                            </button>
+                            <button
+                              onClick={() => { addToCart({ id: product.id, name: product.name, subtitle: product.subtitle, price: product.price, img: product.img }); setSearchOpen(false); }}
+                              className="text-[9px] tracking-widest uppercase bg-primary text-primary-foreground px-3 py-1.5 hover:bg-accent transition-colors"
+                            >
+                              カートへ
+                            </button>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 function WishlistDrawer() {
   const { wishlist, toggleWish, wishOpen, setWishOpen, addToCart, setCartOpen } = useContext(NavCtx);
 
@@ -1883,6 +2046,7 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [wishlist, setWishlist] = useState<WishItem[]>([]);
   const [wishOpen, setWishOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const toggleWish = (product: WishItem) => {
     setWishlist((prev) =>
@@ -1918,7 +2082,7 @@ export default function App() {
   }, [page]);
 
   return (
-    <NavCtx.Provider value={{ page, setPage, initialCategory, setInitialCategory, cart, addToCart, removeFromCart, updateQty, cartOpen, setCartOpen, wishlist, toggleWish, wishOpen, setWishOpen }}>
+    <NavCtx.Provider value={{ page, setPage, initialCategory, setInitialCategory, cart, addToCart, removeFromCart, updateQty, cartOpen, setCartOpen, wishlist, toggleWish, wishOpen, setWishOpen, searchOpen, setSearchOpen }}>
       <>
       <style>{`
         @keyframes marquee {
@@ -1968,6 +2132,7 @@ export default function App() {
         body { font-family: 'Jost', sans-serif; }
       `}</style>
 
+      <SearchModal />
       <WishlistDrawer />
       <CartDrawer />
       <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
