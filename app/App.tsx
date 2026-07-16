@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets";
 
 type CartItem = {
   id: number;
@@ -866,7 +866,7 @@ function Footer() {
       "スキンケア":   { page: "collections", category: "スキンケア" },
       "メイクアップ": { page: "collections", category: "すべて" },
       "フレグランス": { page: "collections", category: "フレグランス" },
-      "ギフトセット": { page: "collections", category: "すべて" },
+      "ギフトセット": { page: "gift-sets", category: "すべて" },
     };
     const dest = map[label];
     if (dest) { setInitialCategory(dest.category); setPage(dest.page); }
@@ -1360,6 +1360,225 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+const GIFT_SETS = [
+  {
+    id: "g1",
+    name: "スキンリチュアル プレミアムセット",
+    subtitle: "毎日の儀式を特別に",
+    desc: "ルミナスセラム・ローズミストトナー・パールグロウマスクの3点セット。スキンケアの完全なルーティンをギフトに。",
+    price: "¥28,000",
+    originalPrice: "¥34,400",
+    items: ["ルミナス セラム", "ローズ ミスト トナー", "パールグロウ マスク"],
+    img: "https://images.unsplash.com/photo-1765963449601-02d96e3dcfcb?w=700&h=800&fit=crop&auto=format",
+    badge: "人気No.1",
+    tag: "SKINCARE",
+  },
+  {
+    id: "g2",
+    name: "カラードラマ ホリデーセット",
+    subtitle: "色彩の魔法をプレゼントに",
+    desc: "アイパレット「夕暮れ」・ヴェルヴェットルージュ・ゴールドアイライナーの華やかなメイクアップセット。",
+    price: "¥19,800",
+    originalPrice: "¥24,100",
+    items: ["アイパレット「夕暮れ」", "ヴェルヴェット ルージュ", "ゴールド アイライナー"],
+    img: "https://images.unsplash.com/photo-1676570092589-a6c09ecbb373?w=700&h=800&fit=crop&auto=format",
+    badge: "限定",
+    tag: "MAKEUP",
+  },
+  {
+    id: "g3",
+    name: "ノワール フレグランスセット",
+    subtitle: "香りで記憶に刻む",
+    desc: "ノワールパフューム・ローズオイルセラムのラグジュアリーな組み合わせ。特別な方への贈り物に。",
+    price: "¥24,500",
+    originalPrice: "¥32,500",
+    items: ["ノワール パフューム", "ローズ オイル セラム"],
+    img: "https://images.unsplash.com/photo-1759563874660-e51f23908127?w=700&h=800&fit=crop&auto=format",
+    badge: "新作",
+    tag: "FRAGRANCE",
+  },
+  {
+    id: "g4",
+    name: "LUMIÈRE ベストセラーセット",
+    subtitle: "ブランドの真髄を一箱に",
+    desc: "最も愛されるアイテム5点を厳選。初めてLUMIÈREを贈る方にも、コレクターにも喜ばれる究極のセット。",
+    price: "¥45,000",
+    originalPrice: "¥58,800",
+    items: ["ルミナス セラム", "シルク ファンデーション", "アイパレット「夕暮れ」", "ノワール パフューム", "ローズ オイル セラム"],
+    img: "https://images.unsplash.com/photo-1759563876829-47c081a2afd9?w=700&h=800&fit=crop&auto=format",
+    badge: "ベストセラー",
+    tag: "SPECIAL",
+  },
+  {
+    id: "g5",
+    name: "ミニチュア ディスカバリーセット",
+    subtitle: "LUMIÈREの世界を体験",
+    desc: "人気商品のミニサイズ6点入り。ブランド初体験の方や旅行のお供にも最適。",
+    price: "¥12,000",
+    originalPrice: "¥15,800",
+    items: ["各カテゴリーより厳選6点"],
+    img: "https://images.unsplash.com/photo-1765887986673-953fccf56464?w=700&h=800&fit=crop&auto=format",
+    badge: null,
+    tag: "TRIAL",
+  },
+  {
+    id: "g6",
+    name: "ホワイトボックス ブライダルセット",
+    subtitle: "特別な日のために",
+    desc: "ウェディングやアニバーサリーに贈る上質なスキンケア＆メイクセット。白いシグネチャーボックス入り。",
+    price: "¥38,000",
+    originalPrice: "¥48,600",
+    items: ["グロウ プライマー", "シルク ファンデーション", "ヴェルヴェット ルージュ", "ルミナス セラム"],
+    img: "https://images.unsplash.com/photo-1759563871375-d5b140f6646e?w=700&h=800&fit=crop&auto=format",
+    badge: "限定",
+    tag: "BRIDAL",
+  },
+];
+
+function GiftSetsPage() {
+  const { setPage, addToCart } = useContext(NavCtx);
+  const [selected, setSelected] = useState<string | null>(null);
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 40%, rgba(201,168,76,0.12) 0%, transparent 60%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 80%, rgba(160,120,40,0.08) 0%, transparent 50%)" }} />
+        <div className="max-w-7xl mx-auto px-6 py-24">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="relative z-10 flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-10"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Gift Sets</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-end">
+              <div>
+                <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-7xl text-foreground font-medium leading-tight mb-5">
+                  贈る喜び、<br /><span className="italic gold-shimmer">受け取る幸せ</span>
+                </h1>
+                <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-md">
+                  大切な人へ、自分自身へ。LUMIÈREのギフトセットは、
+                  特別なシグネチャーボックスに入れてお届けします。
+                  無料のギフトラッピング・メッセージカード付き。
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-4 md:justify-end">
+                {[
+                  { icon: "✦", label: "無料ギフトラッピング" },
+                  { icon: "◇", label: "メッセージカード無料" },
+                  { icon: "○", label: "翌日配送対応" },
+                ].map((f) => (
+                  <div key={f.label} className="border border-border/40 px-4 py-3 flex items-center gap-2">
+                    <span className="text-primary text-xs">{f.icon}</span>
+                    <span className="text-[10px] tracking-widest uppercase text-muted-foreground">{f.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+        {/* Divider */}
+        <div className="border-b border-border/30" />
+      </div>
+
+      {/* Gift sets grid */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {GIFT_SETS.map((set, i) => (
+            <FadeUp key={set.id} delay={i * 0.07}>
+              <div
+                className={`group flex flex-col border transition-all duration-500 cursor-pointer ${selected === set.id ? "border-primary/50" : "border-border/30 hover:border-primary/30"}`}
+                onClick={() => setSelected(selected === set.id ? null : set.id)}
+              >
+                {/* Image */}
+                <div className="relative overflow-hidden aspect-[4/3] bg-card">
+                  <img
+                    src={set.img}
+                    alt={set.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  {set.badge && (
+                    <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[9px] tracking-[0.25em] uppercase px-2.5 py-1">
+                      {set.badge}
+                    </span>
+                  )}
+                  <span className="absolute top-3 right-3 text-[9px] tracking-[0.3em] uppercase text-white/60 border border-white/20 px-2 py-1">
+                    {set.tag}
+                  </span>
+                </div>
+
+                {/* Info */}
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="font-['Cormorant_Garamond'] text-xl text-foreground mb-1">{set.name}</h3>
+                  <p className="font-['Cormorant_Garamond'] italic text-sm text-primary mb-3">{set.subtitle}</p>
+                  <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed mb-4">{set.desc}</p>
+
+                  {/* Contents */}
+                  <div className="mb-5">
+                    <p className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground mb-2">セット内容</p>
+                    <ul className="space-y-1">
+                      {set.items.map((item) => (
+                        <li key={item} className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span className="text-primary/50 text-[8px]">◆</span>{item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-auto">
+                    <div className="flex items-baseline gap-3 mb-4">
+                      <span className="font-['Cormorant_Garamond'] text-2xl text-primary">{set.price}</span>
+                      <span className="text-xs text-muted-foreground line-through">{set.originalPrice}</span>
+                      <span className="text-[9px] tracking-widest text-accent uppercase">
+                        {Math.round((1 - parseInt(set.price.replace(/[¥,]/g, "")) / parseInt(set.originalPrice.replace(/[¥,]/g, ""))) * 100)}% OFF
+                      </span>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart({ id: parseInt(set.id.replace("g", "")) + 100, name: set.name, subtitle: set.subtitle, price: set.price, img: set.img });
+                      }}
+                      className="w-full py-3 bg-primary text-primary-foreground text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+                    >
+                      カートに追加
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+
+        {/* Customization CTA */}
+        <FadeUp className="mt-20">
+          <div
+            className="relative overflow-hidden border border-border/40 p-12 text-center"
+            style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(160,120,40,0.04) 100%)" }}
+          >
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #c9a84c 1px, transparent 1px)", backgroundSize: "30px 30px" }} />
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-3">Custom Order</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl md:text-4xl text-foreground mb-4">
+              オリジナル<span className="italic text-primary">カスタムギフト</span>
+            </h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light max-w-lg mx-auto mb-8">
+              お好みの商品を選んでオリジナルギフトセットを作成できます。
+              予算・テーマ・受け取る方の肌質に合わせてスタイリストがご提案します。
+            </p>
+            <button className="group inline-flex items-center gap-3 border border-primary/50 px-10 py-4 text-xs tracking-[0.25em] uppercase text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+              カスタムオーダーを相談する
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -2176,6 +2395,10 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <CollectionsPage />
+          </motion.div>
+        ) : page === "gift-sets" ? (
+          <motion.div key="gift-sets" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+            <GiftSetsPage />
           </motion.div>
         ) : page === "new-arrivals" ? (
           <motion.div
