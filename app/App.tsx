@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq";
 
 type CartItem = {
   id: number;
@@ -893,6 +893,7 @@ function Footer() {
               title: "サポート",
               links: ["よくある質問", "配送について", "返品・交換", "お問い合わせ"],
               shopping: false,
+              support: true,
             },
             {
               title: "ブランド",
@@ -907,7 +908,11 @@ function Footer() {
                   <li key={link}>
                     <a
                       href="#"
-                      onClick={col.shopping ? (e) => { e.preventDefault(); handleShoppingLink(link); } : undefined}
+                      onClick={
+                        col.shopping ? (e) => { e.preventDefault(); handleShoppingLink(link); }
+                        : (col as any).support && link === "よくある質問" ? (e) => { e.preventDefault(); setPage("faq"); }
+                        : undefined
+                      }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
                     >
                       {link}
@@ -1360,6 +1365,159 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+const FAQ_DATA = [
+  {
+    category: "ご注文について",
+    items: [
+      { q: "注文後のキャンセルはできますか？", a: "ご注文確定後2時間以内であれば、マイページまたはお問い合わせフォームよりキャンセルが可能です。発送準備に入った後はキャンセルできかねますのでご了承ください。" },
+      { q: "注文確認メールが届きません", a: "ご注文後、自動的に確認メールをお送りしています。迷惑メールフォルダもご確認ください。それでも届かない場合はカスタマーサポートまでご連絡ください。" },
+      { q: "ギフトラッピングは対応していますか？", a: "はい、全商品・全ギフトセットに無料のシグネチャーギフトラッピングをご用意しています。注文時に「ギフトラッピングを希望する」をご選択ください。メッセージカード（200文字まで）も無料でお入れできます。" },
+      { q: "領収書の発行はできますか？", a: "マイページの「注文履歴」より領収書のPDFをダウンロードいただけます。宛名の変更が必要な場合はカスタマーサポートまでお申し付けください。" },
+    ],
+  },
+  {
+    category: "配送について",
+    items: [
+      { q: "送料はいくらですか？", a: "¥10,000以上のご購入で送料無料です。¥10,000未満の場合は全国一律¥660（税込）となります。翌日配送（ゆうパック速達）をご希望の場合は追加¥330がかかります。" },
+      { q: "海外への配送は対応していますか？", a: "現在、日本国内のみの配送となっております。海外への発送は準備中です。グローバルサイトのオープンをお待ちください。" },
+      { q: "配送日数はどのくらいかかりますか？", a: "ご注文確定後、通常2〜3営業日以内に発送いたします。お届けまでの日数は地域によって異なりますが、発送後1〜3日でのお届けとなります。" },
+      { q: "配送状況を確認できますか？", a: "発送完了後、追跡番号をメールでお知らせします。ヤマト運輸または佐川急便の追跡サービスよりリアルタイムで配送状況をご確認いただけます。" },
+    ],
+  },
+  {
+    category: "商品・成分について",
+    items: [
+      { q: "全製品はヴィーガン・クルエルティフリーですか？", a: "はい、LUMIÈREの全製品はヴィーガン認定・クルエルティフリー認定を取得しています。動物由来成分は一切使用せず、動物実験も行っていません。" },
+      { q: "敏感肌でも使用できますか？", a: "全製品において皮膚科医によるパッチテストを実施しています。ただし、肌質には個人差があります。初めてご使用の際はパッチテストを行い、異常を感じた場合は使用を中止してください。" },
+      { q: "成分表示はどこで確認できますか？", a: "各商品ページの「成分表示」タブよりご確認いただけます。また、パッケージにも全成分を記載しています。特定成分についてのご質問はカスタマーサポートまでお気軽にどうぞ。" },
+      { q: "製品の使用期限はありますか？", a: "未開封の状態で製造から3年、開封後は商品により異なりますが6〜12ヶ月を目安にお使いください。各商品に開封後使用期限マーク（PAOマーク）を記載しています。" },
+    ],
+  },
+  {
+    category: "返品・交換について",
+    items: [
+      { q: "返品・交換のポリシーを教えてください", a: "商品到着後14日以内であれば、未開封・未使用の商品に限り返品・交換を承ります。返送料はお客様のご負担となります。なお、ギフトセットは一部のみの返品はお受けできません。" },
+      { q: "届いた商品が破損していた場合は？", a: "配送中の破損・初期不良の場合は、商品到着後7日以内にカスタマーサポートまでご連絡ください。写真をお送りいただければ、送料無料で新品と交換いたします。" },
+      { q: "肌に合わなかった場合の返品はできますか？", a: "一度でもご使用いただいた商品の返品はお受けしておりません。ただし、当社の品質基準を満たしていないと判断した場合は個別対応いたします。ご購入前にサンプルのご利用をお勧めします。" },
+    ],
+  },
+];
+
+function FAQPage() {
+  const { setPage } = useContext(NavCtx);
+  const [openItem, setOpenItem] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState("すべて");
+
+  const categories = ["すべて", ...FAQ_DATA.map((d) => d.category)];
+  const filtered = activeCategory === "すべて" ? FAQ_DATA : FAQ_DATA.filter((d) => d.category === activeCategory);
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-24 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.07) 0%, transparent 55%)" }} />
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="relative z-10 flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">FAQ</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-5">
+              よくある<span className="italic gold-shimmer">ご質問</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              ご不明な点がございましたら、下記をご確認ください。
+              解決しない場合はカスタマーサポートまでお気軽にご連絡ください。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-14">
+        {/* Category tabs */}
+        <div className="flex flex-wrap gap-2 mb-12">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 text-[10px] tracking-[0.2em] uppercase transition-all duration-300 border ${
+                activeCategory === cat
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border/40 text-muted-foreground hover:border-primary/40 hover:text-primary"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Accordion */}
+        <div className="space-y-10">
+          {filtered.map((section) => (
+            <FadeUp key={section.category}>
+              <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-5">{section.category}</p>
+              <div className="space-y-0 border-t border-border/30">
+                {section.items.map((item, i) => {
+                  const key = `${section.category}-${i}`;
+                  const isOpen = openItem === key;
+                  return (
+                    <div key={key} className="border-b border-border/30">
+                      <button
+                        onClick={() => setOpenItem(isOpen ? null : key)}
+                        className="w-full flex items-center justify-between gap-4 py-5 text-left group"
+                      >
+                        <span className="text-sm text-foreground font-['Jost'] group-hover:text-primary transition-colors">{item.q}</span>
+                        <motion.span
+                          animate={{ rotate: isOpen ? 45 : 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="flex-shrink-0 text-primary text-lg leading-none"
+                        >
+                          +
+                        </motion.span>
+                      </button>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: [0.22,1,0.36,1] }}
+                          className="overflow-hidden"
+                        >
+                          <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose pb-5 pl-0 border-l-2 border-primary/30 pl-4">
+                            {item.a}
+                          </p>
+                        </motion.div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+
+        {/* Contact CTA */}
+        <FadeUp className="mt-16">
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Still need help?</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">お気軽にご連絡ください</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
+              平日10:00〜18:00（土日祝を除く）にカスタマーサポートが対応いたします。
+            </p>
+            <button className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+              お問い合わせフォームへ
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -2417,6 +2575,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <BrandStoryPage />
+          </motion.div>
+        ) : page === "faq" ? (
+          <motion.div
+            key="faq"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <FAQPage />
           </motion.div>
         ) : (
           <motion.div
