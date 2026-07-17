@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact";
 
 type CartItem = {
   id: number;
@@ -913,6 +913,7 @@ function Footer() {
                         : (col as any).support && link === "よくある質問" ? (e) => { e.preventDefault(); setPage("faq"); }
                         : (col as any).support && link === "配送について" ? (e) => { e.preventDefault(); setPage("shipping"); }
                         : (col as any).support && link === "返品・交換" ? (e) => { e.preventDefault(); setPage("returns"); }
+                        : (col as any).support && link === "お問い合わせ" ? (e) => { e.preventDefault(); setPage("contact"); }
                         : undefined
                       }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
@@ -1372,6 +1373,173 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
   );
 }
 
+function ContactPage() {
+  const { setPage } = useContext(NavCtx);
+  const [form, setForm] = useState({ name: "", email: "", category: "", message: "" });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  const inputClass = "w-full bg-muted border border-border/40 text-foreground text-sm font-['Jost'] font-light px-4 py-3 focus:outline-none focus:border-primary/60 transition-colors placeholder:text-muted-foreground";
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-24 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(201,168,76,0.07) 0%, transparent 55%)" }} />
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Contact Us</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-5">
+              お<span className="italic gold-shimmer">問い合わせ</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              ご質問・ご要望・ご意見など、お気軽にお送りください。
+              平日10:00〜18:00（土日祝を除く）に担当者よりご返信いたします。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-14">
+        <div className="grid md:grid-cols-3 gap-12">
+          {/* サイドパネル */}
+          <FadeUp className="space-y-8">
+            <div>
+              <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4">Response Time</p>
+              <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">
+                通常、1〜2営業日以内にご返信いたします。お急ぎの場合はお電話にてご連絡ください。
+              </p>
+            </div>
+            <div className="border-t border-border/30 pt-6">
+              <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4">Quick Links</p>
+              <ul className="space-y-3">
+                {[
+                  { label: "よくある質問", page: "faq" as Page },
+                  { label: "配送について", page: "shipping" as Page },
+                  { label: "返品・交換", page: "returns" as Page },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <button
+                      onClick={() => setPage(l.page)}
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light flex items-center gap-2"
+                    >
+                      <span className="text-primary/40">→</span>{l.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border-t border-border/30 pt-6">
+              <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-4">Business Hours</p>
+              <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">
+                平日 10:00〜18:00<br />
+                土日祝・年末年始を除く
+              </p>
+            </div>
+          </FadeUp>
+
+          {/* フォーム */}
+          <FadeUp className="md:col-span-2">
+            {submitted ? (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="border border-primary/30 p-12 text-center"
+                style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 100%)" }}
+              >
+                <p className="font-['Cormorant_Garamond'] text-5xl text-primary mb-4">✓</p>
+                <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">送信が完了しました</h2>
+                <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose mb-8">
+                  お問い合わせありがとうございます。<br />
+                  1〜2営業日以内にご返信いたします。
+                </p>
+                <button
+                  onClick={() => { setForm({ name: "", email: "", category: "", message: "" }); setSubmitted(false); }}
+                  className="text-xs tracking-[0.2em] uppercase text-primary hover:text-accent transition-colors"
+                >
+                  別のお問い合わせをする
+                </button>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-2">お名前 *</label>
+                    <input
+                      required
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      placeholder="山田 花子"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-2">メールアドレス *</label>
+                    <input
+                      required
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="example@email.com"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-2">お問い合わせ種別 *</label>
+                  <select
+                    required
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    className={inputClass + " appearance-none cursor-pointer"}
+                  >
+                    <option value="" disabled>選択してください</option>
+                    {["ご注文について", "配送について", "返品・交換について", "商品・成分について", "その他"].map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-2">お問い合わせ内容 *</label>
+                  <textarea
+                    required
+                    rows={6}
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="ご質問・ご要望をご記入ください"
+                    className={inputClass + " resize-none"}
+                  />
+                </div>
+                <p className="text-[10px] text-muted-foreground font-['Jost'] font-light">
+                  * 必須項目。送信いただいた個人情報は、お問い合わせ対応のみに使用いたします。
+                </p>
+                <button
+                  type="submit"
+                  className="group w-full flex items-center justify-center gap-3 bg-primary text-primary-foreground py-4 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+                >
+                  送信する
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </form>
+            )}
+          </FadeUp>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ReturnsPage() {
   const { setPage } = useContext(NavCtx);
   return (
@@ -1496,7 +1664,7 @@ function ReturnsPage() {
               >
                 よくある質問を見る
               </button>
-              <button className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+              <button onClick={() => setPage("contact")} className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
                 お問い合わせフォームへ
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </button>
@@ -1611,7 +1779,7 @@ function ShippingPage() {
               >
                 よくある質問を見る
               </button>
-              <button className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+              <button onClick={() => setPage("contact")} className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
                 お問い合わせ
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </button>
@@ -1765,7 +1933,7 @@ function FAQPage() {
             <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
               平日10:00〜18:00（土日祝を除く）にカスタマーサポートが対応いたします。
             </p>
-            <button className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+            <button onClick={() => setPage("contact")} className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
               お問い合わせフォームへ
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
@@ -2855,6 +3023,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <ReturnsPage />
+          </motion.div>
+        ) : page === "contact" ? (
+          <motion.div
+            key="contact"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <ContactPage />
           </motion.div>
         ) : (
           <motion.div
