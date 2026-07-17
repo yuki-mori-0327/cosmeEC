@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping";
 
 type CartItem = {
   id: number;
@@ -911,6 +911,7 @@ function Footer() {
                       onClick={
                         col.shopping ? (e) => { e.preventDefault(); handleShoppingLink(link); }
                         : (col as any).support && link === "よくある質問" ? (e) => { e.preventDefault(); setPage("faq"); }
+                        : (col as any).support && link === "配送について" ? (e) => { e.preventDefault(); setPage("shipping"); }
                         : undefined
                       }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
@@ -1365,6 +1366,121 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ShippingPage() {
+  const { setPage } = useContext(NavCtx);
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-24 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 20% 60%, rgba(201,168,76,0.07) 0%, transparent 55%)" }} />
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Shipping</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-5">
+              配送に<span className="italic gold-shimmer">ついて</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              LUMIÈREのすべての商品は、丁寧にパッケージしてお届けいたします。
+              大切なご注文が安全に届くよう、配送品質にこだわっています。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-14 space-y-14">
+        {/* 送料 */}
+        <FadeUp>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              { label: "¥10,000以上のご購入", fee: "送料無料", note: "国内全域・離島含む" },
+              { label: "¥10,000未満のご購入", fee: "¥660（税込）", note: "全国一律" },
+              { label: "翌日配送（速達）", fee: "+¥330（税込）", note: "お届け日時指定対応" },
+              { label: "ギフトラッピング", fee: "無料", note: "メッセージカード付き" },
+            ].map((item) => (
+              <div key={item.label} className="border border-border/40 p-7" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 100%)" }}>
+                <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-2">{item.note}</p>
+                <p className="text-sm text-foreground font-['Jost'] mb-3">{item.label}</p>
+                <p className="font-['Cormorant_Garamond'] text-3xl text-primary">{item.fee}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* 配送スケジュール */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6">Delivery Schedule</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-8">配送スケジュール</h2>
+          <div className="relative pl-6 border-l border-border/30 space-y-8">
+            {[
+              { step: "01", title: "ご注文確定", desc: "お支払い完了後、すぐに受付確認メールが届きます。" },
+              { step: "02", title: "商品の検品・梱包", desc: "専任スタッフが品質チェックを行い、シグネチャーボックスに丁寧に梱包します。通常1〜2営業日で発送準備が整います。" },
+              { step: "03", title: "発送・追跡番号のご案内", desc: "発送完了後、追跡番号をメールでお知らせします。ヤマト運輸または佐川急便でのお届けとなります。" },
+              { step: "04", title: "お届け", desc: "発送後、通常1〜2日（離島・一部地域は2〜3日）でお届けします。不在時は再配達を承ります。" },
+            ].map((s) => (
+              <div key={s.step} className="flex gap-5">
+                <span className="font-['Cormorant_Garamond'] text-4xl text-primary/30 leading-none flex-shrink-0">{s.step}</span>
+                <div>
+                  <p className="text-sm text-foreground font-['Jost'] mb-1">{s.title}</p>
+                  <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* 対応地域・注意事項 */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6">Notes</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-6">ご注意事項</h2>
+          <div className="space-y-4">
+            {[
+              "現在、配送は日本国内のみ対応しています。海外発送は準備中です。",
+              "離島・一部山間部は配達に追加日数がかかる場合があります。",
+              "天候・交通状況により配達が遅れる場合があります。",
+              "年末年始・大型連休中は発送が通常より遅れる場合があります。",
+              "複数商品のご注文は、まとめて1回で発送いたします。",
+            ].map((note, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <span className="text-primary mt-0.5 flex-shrink-0">—</span>
+                <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{note}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* CTA */}
+        <FadeUp>
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Need Help?</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">ご不明な点はございますか？</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
+              配送に関するご質問は、カスタマーサポートまでお気軽にお問い合わせください。
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={() => setPage("faq")}
+                className="group inline-flex items-center gap-3 border border-primary text-primary px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
+              >
+                よくある質問を見る
+              </button>
+              <button className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+                お問い合わせ
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -2584,6 +2700,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <FAQPage />
+          </motion.div>
+        ) : page === "shipping" ? (
+          <motion.div
+            key="shipping"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <ShippingPage />
           </motion.div>
         ) : (
           <motion.div
