@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns";
 
 type CartItem = {
   id: number;
@@ -912,6 +912,7 @@ function Footer() {
                         col.shopping ? (e) => { e.preventDefault(); handleShoppingLink(link); }
                         : (col as any).support && link === "よくある質問" ? (e) => { e.preventDefault(); setPage("faq"); }
                         : (col as any).support && link === "配送について" ? (e) => { e.preventDefault(); setPage("shipping"); }
+                        : (col as any).support && link === "返品・交換" ? (e) => { e.preventDefault(); setPage("returns"); }
                         : undefined
                       }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
@@ -1366,6 +1367,142 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ReturnsPage() {
+  const { setPage } = useContext(NavCtx);
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-24 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 70% 30%, rgba(201,168,76,0.07) 0%, transparent 55%)" }} />
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Returns & Exchanges</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-5">
+              返品・<span className="italic gold-shimmer">交換</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              お客様にご満足いただけない場合は、お気軽にご連絡ください。
+              LUMIÈREは、すべてのお客様に最高の体験をお届けすることをお約束します。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-14 space-y-14">
+        {/* ポリシー概要カード */}
+        <FadeUp>
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              { icon: "14", unit: "日以内", label: "返品受付期間", note: "商品到着後14日以内" },
+              { icon: "0", unit: "円", label: "交換送料", note: "初期不良・当社都合の場合" },
+              { icon: "24", unit: "h", label: "サポート応答", note: "平日10:00〜18:00対応" },
+            ].map((item) => (
+              <div key={item.label} className="border border-border/40 p-7 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 100%)" }}>
+                <p className="font-['Cormorant_Garamond'] text-5xl text-primary mb-1">
+                  {item.icon}<span className="text-2xl">{item.unit}</span>
+                </p>
+                <p className="text-xs text-foreground font-['Jost'] mb-1">{item.label}</p>
+                <p className="text-[10px] text-muted-foreground font-['Jost'] font-light">{item.note}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* 返品条件 */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6">Conditions</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-6">返品・交換の条件</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="border border-primary/20 p-6" style={{ background: "rgba(201,168,76,0.03)" }}>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-primary mb-4">対応可能</p>
+              <ul className="space-y-3">
+                {[
+                  "商品到着後14日以内のご連絡",
+                  "未開封・未使用の商品",
+                  "配送中の破損・初期不良",
+                  "お届け商品の相違",
+                ].map((t) => (
+                  <li key={t} className="flex items-start gap-3">
+                    <span className="text-primary text-xs mt-0.5">✓</span>
+                    <span className="text-xs text-foreground font-['Jost'] font-light leading-relaxed">{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border border-border/30 p-6">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-4">対応不可</p>
+              <ul className="space-y-3">
+                {[
+                  "開封済み・使用済みの商品",
+                  "商品到着後15日以降のご連絡",
+                  "お客様都合による返品の送料",
+                  "ギフトセットの一部のみの返品",
+                ].map((t) => (
+                  <li key={t} className="flex items-start gap-3">
+                    <span className="text-muted-foreground text-xs mt-0.5">×</span>
+                    <span className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* 手続きの流れ */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6">Process</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-8">お手続きの流れ</h2>
+          <div className="relative pl-6 border-l border-border/30 space-y-8">
+            {[
+              { step: "01", title: "カスタマーサポートへご連絡", desc: "お問い合わせフォームまたはメールにて、注文番号・商品名・返品理由をお知らせください。破損の場合は写真も添付してください。" },
+              { step: "02", title: "返品承認メールの受信", desc: "通常1〜2営業日以内に返品承認メールと返送先住所をお送りします。承認前の返送はお受けできかねます。" },
+              { step: "03", title: "商品の返送", desc: "元のパッケージに梱包の上、承認メール記載の住所にお送りください。お客様都合の場合、送料はお客様負担となります。" },
+              { step: "04", title: "返金・交換の処理", desc: "商品到着確認後、返金は3〜5営業日以内にご登録のお支払い方法へ。交換は在庫確認後、新品を発送いたします。" },
+            ].map((s) => (
+              <div key={s.step} className="flex gap-5">
+                <span className="font-['Cormorant_Garamond'] text-4xl text-primary/30 leading-none flex-shrink-0">{s.step}</span>
+                <div>
+                  <p className="text-sm text-foreground font-['Jost'] mb-1">{s.title}</p>
+                  <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* CTA */}
+        <FadeUp>
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Contact Us</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">返品・交換のご依頼</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
+              まずはカスタマーサポートまでご連絡ください。迅速に対応いたします。
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={() => setPage("faq")}
+                className="inline-flex items-center gap-3 border border-primary text-primary px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
+              >
+                よくある質問を見る
+              </button>
+              <button className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+                お問い合わせフォームへ
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -2709,6 +2846,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <ShippingPage />
+          </motion.div>
+        ) : page === "returns" ? (
+          <motion.div
+            key="returns"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <ReturnsPage />
           </motion.div>
         ) : (
           <motion.div
