@@ -207,7 +207,7 @@ function Nav() {
 
   const NAV_ITEMS: { label: string; category: string }[] = [
     { label: "スキンケア", category: "スキンケア" },
-    { label: "メイクアップ", category: "すべて" },
+    { label: "メイクアップ", category: "メイクアップ" },
     { label: "フレグランス", category: "フレグランス" },
     { label: "コレクション", category: "すべて" },
   ];
@@ -318,7 +318,7 @@ function Nav() {
             <div className="font-['Cormorant_Garamond'] text-2xl tracking-widest mb-4">LUMIÈRE</div>
             {[
               { label: "スキンケア", category: "スキンケア" },
-              { label: "メイクアップ", category: "すべて" },
+              { label: "メイクアップ", category: "メイクアップ" },
               { label: "フレグランス", category: "フレグランス" },
               { label: "コレクション", category: "すべて" },
               { label: "新作", category: "すべて" },
@@ -864,7 +864,7 @@ function Footer() {
   const handleShoppingLink = (label: string) => {
     const map: Record<string, { page: Page; category: string }> = {
       "スキンケア":   { page: "collections", category: "スキンケア" },
-      "メイクアップ": { page: "collections", category: "すべて" },
+      "メイクアップ": { page: "collections", category: "メイクアップ" },
       "フレグランス": { page: "collections", category: "フレグランス" },
       "ギフトセット": { page: "gift-sets", category: "すべて" },
     };
@@ -1019,7 +1019,8 @@ const ALL_COLLECTION_PRODUCTS = [
 ];
 
 const SORT_OPTIONS = ["おすすめ順", "新着順", "価格が低い順", "価格が高い順", "レビュー評価順"];
-const CATEGORIES = ["すべて", "スキンケア", "ベースメイク", "リップ", "アイメイク", "フレグランス"];
+const CATEGORIES = ["すべて", "スキンケア", "メイクアップ", "ベースメイク", "リップ", "アイメイク", "フレグランス"];
+const MAKEUP_CATS = ["ベースメイク", "リップ", "アイメイク"];
 
 function CollectionsPage() {
   const { setPage, initialCategory, addToCart } = useContext(NavCtx);
@@ -1030,7 +1031,9 @@ function CollectionsPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 20000]);
 
   const filtered = ALL_COLLECTION_PRODUCTS.filter((p) =>
-    activeCategory === "すべて" ? true : p.category === activeCategory
+    activeCategory === "すべて" ? true
+    : activeCategory === "メイクアップ" ? MAKEUP_CATS.includes(p.category)
+    : p.category === activeCategory
   );
 
   const sorted = [...filtered].sort((a, b) => {
