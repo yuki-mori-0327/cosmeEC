@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about";
 
 type CartItem = {
   id: number;
@@ -899,6 +899,7 @@ function Footer() {
               title: "ブランド",
               links: ["私たちについて", "サステナビリティ", "採用情報", "プレス"],
               shopping: false,
+              brand: true,
             },
           ].map((col) => (
             <div key={col.title}>
@@ -914,6 +915,7 @@ function Footer() {
                         : (col as any).support && link === "配送について" ? (e) => { e.preventDefault(); setPage("shipping"); }
                         : (col as any).support && link === "返品・交換" ? (e) => { e.preventDefault(); setPage("returns"); }
                         : (col as any).support && link === "お問い合わせ" ? (e) => { e.preventDefault(); setPage("contact"); }
+                        : (col as any).brand && link === "私たちについて" ? (e) => { e.preventDefault(); setPage("about"); }
                         : undefined
                       }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
@@ -1371,6 +1373,150 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AboutPage() {
+  const { setPage } = useContext(NavCtx);
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden" style={{ minHeight: "60vh" }}>
+        <img
+          src="https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=1600&h=900&fit=crop&auto=format"
+          alt="brand"
+          className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+        />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(8,8,8,0.3) 0%, rgba(8,8,8,0.85) 100%)" }} />
+        <div className="relative z-10 flex flex-col justify-end h-full max-w-4xl mx-auto px-6 pb-20 pt-32">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22,1,0.36,1] }}>
+            <button
+              onClick={() => setPage("home")}
+              className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8"
+            >
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Our Story</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-7xl text-foreground font-light leading-tight mb-6">
+              私たちに<span className="italic gold-shimmer">ついて</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              美しさとは、外側にあるものではなく、内側から滲み出るものだと私たちは信じています。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-20 space-y-24">
+        {/* ミッション */}
+        <FadeUp>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-5">Mission</p>
+              <h2 className="font-['Cormorant_Garamond'] text-4xl text-foreground mb-6 leading-snug">
+                美しさを、すべての人へ。
+              </h2>
+              <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose">
+                LUMIÈREは2018年、パリにインスパイアされた東京のラボで誕生しました。創業者の想いはひとつ——すべての人が自分らしい美しさを表現できる世界を作ること。科学と芸術の境界を越えた処方で、使うたびに肌が喜ぶ体験を届けています。
+              </p>
+            </div>
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&h=600&fit=crop&auto=format"
+                alt="mission"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.15) 0%, transparent 60%)" }} />
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* 数字で見るLUMIÈRE */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-10 text-center">By The Numbers</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { num: "2018", label: "創業年" },
+              { num: "48+", label: "取り扱いアイテム" },
+              { num: "100%", label: "ヴィーガン認定" },
+              { num: "12ヵ国", label: "展開予定地域" },
+            ].map((stat) => (
+              <div key={stat.label} className="border border-border/40 p-6 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 100%)" }}>
+                <p className="font-['Cormorant_Garamond'] text-4xl text-primary mb-2">{stat.num}</p>
+                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* 価値観 */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-10">Our Values</p>
+          <div className="space-y-0 border-t border-border/30">
+            {[
+              { title: "クリーン ビューティー", body: "有害成分ゼロ。すべての製品において皮膚科医テスト済みの安全な処方を使用しています。" },
+              { title: "サステナビリティ", body: "リサイクル可能なパッケージ、CO2オフセット配送、環境負荷の少ない製造プロセスへの継続的な投資。" },
+              { title: "インクルーシビティ", body: "すべての肌色、肌質に対応したシェードレンジと処方。美しさに「普通」はありません。" },
+              { title: "科学への敬意", body: "最先端の皮膚科学研究に基づく処方。効果を数値で証明することにこだわっています。" },
+            ].map((v) => (
+              <div key={v.title} className="border-b border-border/30 py-6 grid md:grid-cols-3 gap-4">
+                <p className="text-sm text-primary font-['Cormorant_Garamond'] text-xl">{v.title}</p>
+                <p className="md:col-span-2 text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{v.body}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* チーム */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6">Founders</p>
+          <h2 className="font-['Cormorant_Garamond'] text-4xl text-foreground mb-10">創業者について</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              { name: "中村 光", role: "CEO & Co-Founder", img: "photo-1573497019940-1c28c88b4f3e", bio: "パリ・ロレアル研究所での10年を経て帰国。「日本の美意識を世界に」を掲げてLUMIÈREを共同創業。" },
+              { name: "田中 彩華", role: "Chief Formulation Officer", img: "photo-1580489944761-15a19d654956", bio: "東京大学薬学部卒。クリーンビューティーの処方開発に特化した研究者。100以上の特許を保有。" },
+            ].map((f) => (
+              <div key={f.name} className="flex gap-5">
+                <div className="w-20 h-20 flex-shrink-0 overflow-hidden rounded-full border border-border/40">
+                  <img src={`https://images.unsplash.com/${f.img}?w=160&h=160&fit=crop&auto=format`} alt={f.name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <p className="text-foreground font-['Jost'] text-sm mb-0.5">{f.name}</p>
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-primary mb-3">{f.role}</p>
+                  <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{f.bio}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* CTA */}
+        <FadeUp>
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Explore</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">LUMIÈREの世界へ</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
+              私たちのコレクションで、あなただけの美しさを見つけてください。
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={() => setPage("brand-story")}
+                className="inline-flex items-center gap-3 border border-primary text-primary px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
+              >
+                ブランドストーリーを読む
+              </button>
+              <button
+                onClick={() => setPage("collections")}
+                className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+              >
+                コレクションを見る
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -3035,6 +3181,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <ContactPage />
+          </motion.div>
+        ) : page === "about" ? (
+          <motion.div
+            key="about"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <AboutPage />
           </motion.div>
         ) : (
           <motion.div
