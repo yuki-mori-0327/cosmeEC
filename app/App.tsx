@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability";
 
 type CartItem = {
   id: number;
@@ -916,6 +916,7 @@ function Footer() {
                         : (col as any).support && link === "返品・交換" ? (e) => { e.preventDefault(); setPage("returns"); }
                         : (col as any).support && link === "お問い合わせ" ? (e) => { e.preventDefault(); setPage("contact"); }
                         : (col as any).brand && link === "私たちについて" ? (e) => { e.preventDefault(); setPage("about"); }
+                        : (col as any).brand && link === "サステナビリティ" ? (e) => { e.preventDefault(); setPage("sustainability"); }
                         : undefined
                       }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
@@ -1373,6 +1374,144 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function SustainabilityPage() {
+  const { setPage } = useContext(NavCtx);
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden" style={{ minHeight: "55vh" }}>
+        <img
+          src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1600&h=900&fit=crop&auto=format"
+          alt="sustainability"
+          className="absolute inset-0 w-full h-full object-cover opacity-25 pointer-events-none"
+        />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(8,8,8,0.2) 0%, rgba(8,8,8,0.9) 100%)" }} />
+        <div className="relative z-10 flex flex-col justify-end h-full max-w-4xl mx-auto px-6 pb-20 pt-32">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22,1,0.36,1] }}>
+            <button onClick={() => setPage("home")} className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8">
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Sustainability</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-7xl text-foreground font-light leading-tight mb-6">
+              地球と、<span className="italic gold-shimmer">共に。</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              美しくあることと、地球に優しくあることは、両立できると信じています。
+              LUMIÈREのすべての決断は、未来の世代への責任とともにあります。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-20 space-y-24">
+        {/* コミットメント数値 */}
+        <FadeUp>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {[
+              { num: "100%", label: "再生可能エネルギー", note: "製造工程全体" },
+              { num: "0", label: "有害化学物質", note: "処方に一切不使用" },
+              { num: "80%", label: "再生素材パッケージ", note: "2026年目標達成済" },
+              { num: "CO₂", label: "全配送オフセット済", note: "2022年より実施" },
+            ].map((s) => (
+              <div key={s.label} className="border border-border/40 p-6 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 100%)" }}>
+                <p className="font-['Cormorant_Garamond'] text-4xl text-primary mb-1">{s.num}</p>
+                <p className="text-xs text-foreground font-['Jost'] mb-1">{s.label}</p>
+                <p className="text-[10px] text-muted-foreground font-['Jost'] font-light">{s.note}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* 3つの柱 */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-10">Our Pillars</p>
+          <div className="space-y-12">
+            {[
+              {
+                num: "01",
+                title: "クリーン処方",
+                img: "photo-1556228453-efd6c1ff04f6",
+                body: "1,300以上の有害成分をブラックリスト化。パラベン・シリコン・鉱物油・合成香料を使用せず、植物由来の活性成分だけで最大限の効果を引き出します。全製品はEWGグリーン認定を取得しています。",
+              },
+              {
+                num: "02",
+                title: "サステナブル パッケージ",
+                img: "photo-1607082348824-0a96f2a4b9da",
+                body: "外箱はFSC認定の再生紙、ガラス容器は回収・再充填プログラムに対応。プラスチック使用量を2020年比で60%削減しました。2027年までに全パッケージのゼロウェイスト化を目標としています。",
+              },
+              {
+                num: "03",
+                title: "カーボンニュートラル",
+                img: "photo-1473341304170-971dccb5ac1e",
+                body: "製造・輸送・廃棄にわたるサプライチェーン全体のカーボンフットプリントを計測し、認定プロジェクトへの投資で全量オフセット。2030年までにネットゼロを実現します。",
+              },
+            ].map((p) => (
+              <div key={p.num} className="grid md:grid-cols-2 gap-10 items-center">
+                <div className={p.num === "02" ? "md:order-2" : ""}>
+                  <div className="flex items-start gap-4 mb-5">
+                    <span className="font-['Cormorant_Garamond'] text-5xl text-primary/25 leading-none flex-shrink-0">{p.num}</span>
+                    <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground leading-snug pt-2">{p.title}</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose">{p.body}</p>
+                </div>
+                <div className={`relative aspect-[4/3] overflow-hidden ${p.num === "02" ? "md:order-1" : ""}`}>
+                  <img
+                    src={`https://images.unsplash.com/${p.img}?w=800&h=600&fit=crop&auto=format`}
+                    alt={p.title}
+                    className="w-full h-full object-cover opacity-70"
+                  />
+                  <div className="absolute inset-0 pointer-events-none border border-border/30" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* 認証・パートナー */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-8">Certifications</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-8">認証・パートナーシップ</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              "Leaping Bunny クルエルティフリー認定",
+              "COSMOS Organic 認定",
+              "EWG グリーン認定",
+              "FSC 認定パッケージ",
+              "1% for the Planet 加盟",
+              "B Corp 認定取得中",
+            ].map((cert) => (
+              <div key={cert} className="border border-border/30 px-5 py-4 flex items-center gap-3">
+                <span className="text-primary text-xs flex-shrink-0">✓</span>
+                <span className="text-xs text-muted-foreground font-['Jost'] font-light leading-snug">{cert}</span>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* CTA */}
+        <FadeUp>
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Join Us</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">一緒に未来を作りましょう</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
+              容器の回収プログラムへの参加、エコ梱包の選択など、あなたの選択が地球を変えます。
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button onClick={() => setPage("about")} className="inline-flex items-center gap-3 border border-primary text-primary px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-primary hover:text-primary-foreground transition-colors duration-300">
+                私たちについて
+              </button>
+              <button onClick={() => setPage("collections")} className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+                コレクションを見る
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -3190,6 +3329,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <AboutPage />
+          </motion.div>
+        ) : page === "sustainability" ? (
+          <motion.div
+            key="sustainability"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <SustainabilityPage />
           </motion.div>
         ) : (
           <motion.div
