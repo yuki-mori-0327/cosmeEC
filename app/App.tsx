@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers";
 
 type CartItem = {
   id: number;
@@ -917,6 +917,7 @@ function Footer() {
                         : (col as any).support && link === "お問い合わせ" ? (e) => { e.preventDefault(); setPage("contact"); }
                         : (col as any).brand && link === "私たちについて" ? (e) => { e.preventDefault(); setPage("about"); }
                         : (col as any).brand && link === "サステナビリティ" ? (e) => { e.preventDefault(); setPage("sustainability"); }
+                        : (col as any).brand && link === "採用情報" ? (e) => { e.preventDefault(); setPage("careers"); }
                         : undefined
                       }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
@@ -1374,6 +1375,186 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CareersPage() {
+  const { setPage } = useContext(NavCtx);
+  const [openJob, setOpenJob] = useState<string | null>(null);
+
+  const jobs = [
+    {
+      id: "j1",
+      dept: "プロダクト",
+      title: "シニア処方開発研究員",
+      type: "正社員",
+      location: "東京 / ハイブリッド",
+      body: "スキンケア・メイクアップ製品の処方開発をリードするポジションです。植物由来成分の研究から製品化まで、クリーンビューティーの最前線で活躍していただきます。化学・薬学・生化学系の修士以上、処方開発経験5年以上を歓迎します。",
+    },
+    {
+      id: "j2",
+      dept: "マーケティング",
+      title: "ブランドマネージャー",
+      type: "正社員",
+      location: "東京 / リモート可",
+      body: "LUMIÈREのブランド戦略の立案・実行を担うポジションです。国内外のマーケティングチームと連携し、ブランドの世界観を一貫して発信していただきます。ラグジュアリー・コスメティクス業界での経験を歓迎します。",
+    },
+    {
+      id: "j3",
+      dept: "テクノロジー",
+      title: "フロントエンドエンジニア",
+      type: "正社員 / 業務委託",
+      location: "フルリモート",
+      body: "ECプラットフォームおよびブランドサイトの開発をお任せします。React / TypeScript を用いた高品質なUI実装が得意な方を歓迎します。デザインへの感度が高く、アニメーションやマイクロインタラクションに興味がある方は特に歓迎です。",
+    },
+    {
+      id: "j4",
+      dept: "サプライチェーン",
+      title: "サステナビリティ推進担当",
+      type: "正社員",
+      location: "東京",
+      body: "パッケージ・製造・物流にわたるサプライチェーン全体のサステナビリティ施策を推進するポジションです。取引先との交渉・認証取得・進捗レポートの作成をお任せします。環境・CSR領域での実務経験をお持ちの方を歓迎します。",
+    },
+    {
+      id: "j5",
+      dept: "カスタマーサクセス",
+      title: "ビューティーアドバイザー（オンライン）",
+      type: "パートタイム / 業務委託",
+      location: "フルリモート",
+      body: "オンラインチャット・SNSを通じてお客様の肌悩みに寄り添い、最適な製品をご提案するポジションです。美容師・エステティシャン・皮膚科クリニック経験者を歓迎します。週20時間〜応相談。",
+    },
+  ];
+
+  const depts = ["すべて", ...Array.from(new Set(jobs.map((j) => j.dept)))];
+  const [activeDept, setActiveDept] = useState("すべて");
+  const filtered = activeDept === "すべて" ? jobs : jobs.filter((j) => j.dept === activeDept);
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-28 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(201,168,76,0.08) 0%, transparent 60%)" }} />
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button onClick={() => setPage("home")} className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8">
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Careers</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-5">
+              採用<span className="italic gold-shimmer">情報</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              美しさと革新を追求するLUMIÈREで、あなたのキャリアを築きませんか。
+              多様なバックグラウンドを持つチームが、世界水準のコスメブランドを一緒に創っています。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-14 space-y-14">
+        {/* 働く環境 */}
+        <FadeUp>
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              { icon: "🌿", title: "フレキシブルワーク", desc: "フルリモート・ハイブリッド・フレックスタイム制。ライフスタイルに合わせた働き方を選べます。" },
+              { icon: "✦", title: "成長支援", desc: "年間¥150,000の学習支援制度。外部研修・カンファレンス・資格取得を会社が全額サポート。" },
+              { icon: "◇", title: "ウェルネス特典", desc: "全製品の社員割引（50%OFF）、月1回のウェルネスデー、カウンセリングサポート制度あり。" },
+            ].map((b) => (
+              <div key={b.title} className="border border-border/40 p-7" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 100%)" }}>
+                <p className="text-2xl mb-4 font-['Cormorant_Garamond'] text-primary">{b.icon}</p>
+                <p className="text-sm text-foreground font-['Jost'] mb-2">{b.title}</p>
+                <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-relaxed">{b.desc}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* 求人一覧 */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-6">Open Positions</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-8">募集中のポジション</h2>
+
+          {/* 部門フィルター */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {depts.map((d) => (
+              <button
+                key={d}
+                onClick={() => setActiveDept(d)}
+                className={`px-4 py-2 text-[10px] tracking-[0.2em] uppercase transition-all duration-300 border ${
+                  activeDept === d
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border/40 text-muted-foreground hover:border-primary/40 hover:text-primary"
+                }`}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+
+          <div className="space-y-0 border-t border-border/30">
+            {filtered.map((job) => {
+              const isOpen = openJob === job.id;
+              return (
+                <div key={job.id} className="border-b border-border/30">
+                  <button
+                    onClick={() => setOpenJob(isOpen ? null : job.id)}
+                    className="w-full flex items-center justify-between gap-4 py-5 text-left group"
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="text-[10px] tracking-[0.2em] uppercase text-primary bg-primary/10 px-2 py-1 flex-shrink-0">{job.dept}</span>
+                      <div>
+                        <p className="text-sm text-foreground font-['Jost'] group-hover:text-primary transition-colors">{job.title}</p>
+                        <p className="text-[10px] text-muted-foreground font-['Jost'] font-light mt-1">{job.type} · {job.location}</p>
+                      </div>
+                    </div>
+                    <motion.span animate={{ rotate: isOpen ? 45 : 0 }} transition={{ duration: 0.25 }} className="flex-shrink-0 text-primary text-lg leading-none">
+                      +
+                    </motion.span>
+                  </button>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      transition={{ duration: 0.3, ease: [0.22,1,0.36,1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pb-6 pl-4 border-l-2 border-primary/30 space-y-4">
+                        <p className="text-xs text-muted-foreground font-['Jost'] font-light leading-loose">{job.body}</p>
+                        <button
+                          onClick={() => setPage("contact")}
+                          className="group inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 text-[10px] tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+                        >
+                          応募する
+                          <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </FadeUp>
+
+        {/* CTA */}
+        <FadeUp>
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Don't see your role?</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">自分のロールが見つからない？</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
+              ポジションがなくても、あなたの情熱と経験を聞かせてください。<br />オープンアプリケーションを随時受け付けています。
+            </p>
+            <button
+              onClick={() => setPage("contact")}
+              className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+            >
+              オープン応募をする
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -3338,6 +3519,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <SustainabilityPage />
+          </motion.div>
+        ) : page === "careers" ? (
+          <motion.div
+            key="careers"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <CareersPage />
           </motion.div>
         ) : (
           <motion.div
