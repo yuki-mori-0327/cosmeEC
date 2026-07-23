@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press" | "privacy";
 
 type CartItem = {
   id: number;
@@ -941,6 +941,7 @@ function Footer() {
               <a
                 key={item}
                 href="#"
+                onClick={item === "プライバシーポリシー" ? (e) => { e.preventDefault(); setPage("privacy"); } : undefined}
                 className="text-[10px] text-muted-foreground hover:text-primary transition-colors tracking-wider"
               >
                 {item}
@@ -1376,6 +1377,104 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PrivacyPage() {
+  const { setPage } = useContext(NavCtx);
+
+  const sections = [
+    {
+      title: "1. 収集する情報",
+      body: "当社は、お客様がサービスをご利用いただく際に以下の情報を収集することがあります。氏名・メールアドレス・住所・電話番号などの個人識別情報、注文履歴・購入履歴・ウィッシュリストなどのトランザクション情報、IPアドレス・ブラウザの種類・アクセス日時などの技術情報、Cookie・ウェブビーコンを通じた閲覧行動情報。",
+    },
+    {
+      title: "2. 情報の利用目的",
+      body: "収集した個人情報は、以下の目的のためにのみ使用します。ご注文の処理・配送・アフターサポートの提供、新商品・キャンペーン・お得な情報のご案内（同意いただいた場合のみ）、サービスの品質向上および不正利用防止、法令上の義務の履行。お客様の同意なく目的外に利用することはありません。",
+    },
+    {
+      title: "3. 第三者への提供",
+      body: "当社は、以下の場合を除き、お客様の個人情報を第三者に提供・開示しません。お客様の事前の同意がある場合、配送業者・決済代行会社など業務委託先への必要な範囲での提供（守秘義務契約を締結）、法令に基づく開示要求があった場合、人の生命・身体・財産の保護のために必要な場合。",
+    },
+    {
+      title: "4. Cookieの使用",
+      body: "当社のウェブサイトはCookieを使用しています。Cookieは、お客様のブラウザに保存される小さなテキストファイルで、サービスの利便性向上・利用状況の分析・パーソナライズされた広告配信のために使用します。ブラウザの設定からCookieを無効にすることができますが、一部機能が利用できなくなる場合があります。",
+    },
+    {
+      title: "5. 情報の保管・セキュリティ",
+      body: "お客様の個人情報は、SSL暗号化通信による安全な環境で保管します。当社は適切な技術的・組織的措置を講じて不正アクセス・漏洩・改ざんを防止します。個人情報の保存期間は利用目的の達成に必要な期間とし、不要となった情報は安全に廃棄します。",
+    },
+    {
+      title: "6. お客様の権利",
+      body: "お客様は、ご自身の個人情報について以下の権利を有しています。開示・訂正・削除の請求、利用停止・第三者提供停止の請求、メールマガジン等の受信停止。これらのご要望はカスタマーサポートまでお申し付けください。本人確認のうえ、速やかに対応いたします。",
+    },
+    {
+      title: "7. 未成年者のプライバシー",
+      body: "当社のサービスは16歳未満の方を対象としていません。16歳未満の方から意図せず個人情報を収集した場合、保護者からのご連絡をいただき次第、速やかに削除いたします。",
+    },
+    {
+      title: "8. ポリシーの変更",
+      body: "本プライバシーポリシーは、法令の改正やサービス内容の変更に伴い更新されることがあります。重要な変更がある場合は、ウェブサイト上でのお知らせまたはメールにてご連絡します。最終更新日：2024年1月1日",
+    },
+    {
+      title: "9. お問い合わせ",
+      body: "個人情報の取り扱いに関するご質問・ご要望は、下記の個人情報保護管理者までご連絡ください。LUMIÈRE BEAUTY 株式会社 個人情報保護管理者 / privacy@lumiere-beauty.jp / 〒150-0001 東京都渋谷区神宮前5-XX-XX LUMIÈREビル3F",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-20 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 30%, rgba(201,168,76,0.06) 0%, transparent 55%)" }} />
+        <div className="max-w-3xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button onClick={() => setPage("home")} className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8">
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Legal</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl text-foreground font-medium mb-4">
+              プライバシー<span className="italic gold-shimmer">ポリシー</span>
+            </h1>
+            <p className="text-xs text-muted-foreground font-['Jost'] font-light">最終更新日：2024年1月1日</p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-14">
+        <FadeUp>
+          <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose mb-12 border-l-2 border-primary/40 pl-5">
+            LUMIÈRE BEAUTY 株式会社（以下「当社」）は、お客様の個人情報の保護を最重要事項と位置付けています。本プライバシーポリシーは、当社がどのように個人情報を収集・利用・保護するかについてご説明するものです。
+          </p>
+        </FadeUp>
+
+        <div className="space-y-10">
+          {sections.map((s, i) => (
+            <FadeUp key={s.title}>
+              <div className="border-b border-border/20 pb-10">
+                <h2 className="font-['Cormorant_Garamond'] text-2xl text-foreground mb-4">{s.title}</h2>
+                <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose">{s.body}</p>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+
+        <FadeUp className="mt-14">
+          <div className="border border-border/40 p-8 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-5">
+              ご不明な点がございましたら、お気軽にお問い合わせください。
+            </p>
+            <button
+              onClick={() => setPage("contact")}
+              className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+            >
+              お問い合わせ
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -3658,6 +3757,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <PressPage />
+          </motion.div>
+        ) : page === "privacy" ? (
+          <motion.div
+            key="privacy"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <PrivacyPage />
           </motion.div>
         ) : (
           <motion.div
