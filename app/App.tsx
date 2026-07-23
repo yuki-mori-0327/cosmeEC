@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press" | "privacy";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press" | "privacy" | "terms";
 
 type CartItem = {
   id: number;
@@ -941,7 +941,11 @@ function Footer() {
               <a
                 key={item}
                 href="#"
-                onClick={item === "プライバシーポリシー" ? (e) => { e.preventDefault(); setPage("privacy"); } : undefined}
+                onClick={
+                  item === "プライバシーポリシー" ? (e) => { e.preventDefault(); setPage("privacy"); }
+                  : item === "利用規約" ? (e) => { e.preventDefault(); setPage("terms"); }
+                  : undefined
+                }
                 className="text-[10px] text-muted-foreground hover:text-primary transition-colors tracking-wider"
               >
                 {item}
@@ -1377,6 +1381,111 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function TermsPage() {
+  const { setPage } = useContext(NavCtx);
+
+  const sections = [
+    {
+      title: "第1条（適用）",
+      body: "本利用規約（以下「本規約」）は、LUMIÈRE BEAUTY 株式会社（以下「当社」）が提供するウェブサイトおよびECサービス（以下「本サービス」）の利用条件を定めるものです。お客様は本規約に同意のうえ、本サービスをご利用ください。",
+    },
+    {
+      title: "第2条（アカウント登録）",
+      body: "本サービスの一部機能はアカウント登録が必要です。お客様は正確かつ最新の情報を登録する義務を負います。アカウントの管理はお客様の責任において行うものとし、第三者への譲渡・貸与はできません。不正利用が判明した場合は直ちに当社へご連絡ください。",
+    },
+    {
+      title: "第3条（商品の購入）",
+      body: "商品の購入申し込みはお客様の注文確定をもって成立し、当社からの注文確認メール送付により売買契約が成立します。商品の価格・在庫状況は予告なく変更される場合があります。表示価格はすべて税込です。",
+    },
+    {
+      title: "第4条（支払い）",
+      body: "お支払い方法はクレジットカード（VISA・Mastercard・JCB・AMEX）、コンビニ払い、銀行振込、後払い（ペイディ）に対応しています。クレジットカードのご利用はSSL暗号化通信により安全に処理されます。",
+    },
+    {
+      title: "第5条（キャンセル・返品）",
+      body: "注文確定後2時間以内はキャンセルが可能です。商品到着後14日以内で未開封・未使用の商品に限り返品を承ります。詳細は返品・交換ポリシーをご確認ください。お客様都合による返品の場合、送料はお客様負担となります。",
+    },
+    {
+      title: "第6条（知的財産権）",
+      body: "本サービス上のすべてのコンテンツ（テキスト・画像・デザイン・ロゴ・商標等）の知的財産権は当社または正当な権利者に帰属します。お客様は当社の事前の書面による許可なく、これらのコンテンツを複製・転用・二次利用することはできません。",
+    },
+    {
+      title: "第7条（禁止事項）",
+      body: "お客様は以下の行為を行ってはなりません。法令または公序良俗に違反する行為、当社または第三者の知的財産権・プライバシーを侵害する行為、本サービスの運営を妨害する行為、虚偽の情報を登録する行為、転売・商業目的での大量購入、その他当社が不適切と判断する行為。",
+    },
+    {
+      title: "第8条（免責事項）",
+      body: "当社は、本サービスの中断・遅延・データの消失等について、当社の故意または重過失による場合を除き責任を負いません。また、お客様と第三者との間で生じたトラブルについて、当社は一切の責任を負いません。",
+    },
+    {
+      title: "第9条（規約の変更）",
+      body: "当社は必要に応じて本規約を変更することができます。重要な変更がある場合はウェブサイト上でのお知らせまたはメールにてご連絡します。変更後に本サービスを継続してご利用いただいた場合、変更後の規約に同意したものとみなします。最終更新日：2024年1月1日",
+    },
+    {
+      title: "第10条（準拠法・管轄）",
+      body: "本規約は日本法に準拠します。本サービスに関して紛争が生じた場合は、東京地方裁判所を第一審の専属的合意管轄裁判所とします。",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-20 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 40% 60%, rgba(201,168,76,0.06) 0%, transparent 55%)" }} />
+        <div className="max-w-3xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button onClick={() => setPage("home")} className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8">
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Legal</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl text-foreground font-medium mb-4">
+              利用<span className="italic gold-shimmer">規約</span>
+            </h1>
+            <p className="text-xs text-muted-foreground font-['Jost'] font-light">最終更新日：2024年1月1日</p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-14">
+        <FadeUp>
+          <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose mb-12 border-l-2 border-primary/40 pl-5">
+            本サービスをご利用いただく前に、以下の利用規約をよくお読みください。本サービスにアクセスまたはご利用いただくことで、本規約のすべての条件に同意したものとみなします。
+          </p>
+        </FadeUp>
+
+        <div className="space-y-10">
+          {sections.map((s) => (
+            <FadeUp key={s.title}>
+              <div className="border-b border-border/20 pb-10">
+                <h2 className="font-['Cormorant_Garamond'] text-2xl text-foreground mb-4">{s.title}</h2>
+                <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose">{s.body}</p>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+
+        <FadeUp className="mt-14">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 border border-border/40 p-8" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <button
+              onClick={() => setPage("privacy")}
+              className="inline-flex items-center gap-3 border border-primary text-primary px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
+            >
+              プライバシーポリシー
+            </button>
+            <button
+              onClick={() => setPage("contact")}
+              className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+            >
+              お問い合わせ
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -3766,6 +3875,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <PrivacyPage />
+          </motion.div>
+        ) : page === "terms" ? (
+          <motion.div
+            key="terms"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <TermsPage />
           </motion.div>
         ) : (
           <motion.div
