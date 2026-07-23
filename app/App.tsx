@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press";
 
 type CartItem = {
   id: number;
@@ -918,6 +918,7 @@ function Footer() {
                         : (col as any).brand && link === "私たちについて" ? (e) => { e.preventDefault(); setPage("about"); }
                         : (col as any).brand && link === "サステナビリティ" ? (e) => { e.preventDefault(); setPage("sustainability"); }
                         : (col as any).brand && link === "採用情報" ? (e) => { e.preventDefault(); setPage("careers"); }
+                        : (col as any).brand && link === "プレス" ? (e) => { e.preventDefault(); setPage("press"); }
                         : undefined
                       }
                       className="text-xs text-muted-foreground hover:text-primary transition-colors font-['Jost'] font-light"
@@ -1375,6 +1376,126 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PressPage() {
+  const { setPage } = useContext(NavCtx);
+
+  const coverage = [
+    { outlet: "VOGUE JAPAN", date: "2025年11月", title: "クリーンビューティーの新星——LUMIÈREが変える日本のコスメ市場", category: "特集" },
+    { outlet: "WWD BEAUTY", date: "2025年9月", title: "サステナブルラグジュアリーを体現するブランド10選", category: "掲載" },
+    { outlet: "ELLE JAPON", date: "2025年7月", title: "今季注目のスキンケアルーティン：LUMIÈRE ルミナスセラムを徹底レビュー", category: "レビュー" },
+    { outlet: "Harper's BAZAAR", date: "2025年5月", title: "2025年ビューティーアワード受賞——ベストセラム部門", category: "受賞" },
+    { outlet: "The New York Times", date: "2025年3月", title: "Japanese Clean Beauty Brands Making Waves Globally", category: "掲載" },
+    { outlet: "COSME TOKYO", date: "2025年1月", title: "ヴィーガンコスメアワード 2025 グランプリ受賞", category: "受賞" },
+  ];
+
+  const assets = [
+    { label: "ブランドロゴ（SVG / PNG）", size: "2.4 MB" },
+    { label: "プロダクトビジュアル集", size: "48 MB" },
+    { label: "ブランドガイドライン", size: "5.1 MB" },
+    { label: "創業者プロフィール写真", size: "12 MB" },
+    { label: "会社概要・ファクトシート", size: "0.8 MB" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-28 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 40%, rgba(201,168,76,0.08) 0%, transparent 55%)" }} />
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button onClick={() => setPage("home")} className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8">
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Press & Media</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-medium mb-5">
+              プレス<span className="italic gold-shimmer">ルーム</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl">
+              取材・掲載に関するお問い合わせ、プレスキットのご請求はこちらから。
+              LUMIÈREのブランドストーリーを世界に届けるパートナーをお待ちしています。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-14 space-y-20">
+        {/* メディア掲載実績 */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-8">In The Press</p>
+          <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-8">メディア掲載実績</h2>
+          <div className="space-y-0 border-t border-border/30">
+            {coverage.map((item) => (
+              <div key={item.title} className="border-b border-border/30 py-5 grid md:grid-cols-4 gap-3 items-center group">
+                <div className="flex items-center gap-3">
+                  <span className={`text-[9px] tracking-[0.15em] uppercase px-2 py-1 border ${
+                    item.category === "受賞"
+                      ? "border-primary/50 text-primary bg-primary/10"
+                      : "border-border/40 text-muted-foreground"
+                  }`}>{item.category}</span>
+                </div>
+                <p className="text-sm text-foreground font-['Cormorant_Garamond'] text-lg md:col-span-2 group-hover:text-primary transition-colors leading-snug">{item.title}</p>
+                <div className="text-right">
+                  <p className="text-[10px] tracking-[0.2em] text-muted-foreground font-['Jost'] font-light">{item.outlet}</p>
+                  <p className="text-[10px] text-muted-foreground/60 font-['Jost'] font-light">{item.date}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        {/* プレスキット */}
+        <FadeUp>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-8">Press Kit</p>
+          <div className="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+              <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-4">プレスキット</h2>
+              <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose mb-6">
+                ロゴ・製品ビジュアル・ブランドガイドラインなどのアセットを含む公式プレスキットをご用意しています。ご利用の際は事前にご連絡ください。
+              </p>
+              <button
+                onClick={() => setPage("contact")}
+                className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+              >
+                プレスキットを請求する
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {assets.map((a) => (
+                <div key={a.label} className="flex items-center justify-between border border-border/30 px-5 py-3 hover:border-primary/40 transition-colors">
+                  <span className="text-xs text-foreground font-['Jost'] font-light">{a.label}</span>
+                  <span className="text-[10px] text-muted-foreground font-['Jost'] font-light">{a.size}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* プレス問い合わせ */}
+        <FadeUp>
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">Press Inquiries</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">取材・掲載のご依頼</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-2">
+              press@lumiere-beauty.jp
+            </p>
+            <p className="text-xs text-muted-foreground font-['Jost'] font-light mb-7">
+              平日10:00〜18:00 · 通常2営業日以内にご返信いたします
+            </p>
+            <button
+              onClick={() => setPage("contact")}
+              className="group inline-flex items-center gap-3 border border-primary text-primary px-10 py-3 text-xs tracking-[0.25em] uppercase hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
+            >
+              お問い合わせフォームへ
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -3528,6 +3649,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <CareersPage />
+          </motion.div>
+        ) : page === "press" ? (
+          <motion.div
+            key="press"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <PressPage />
           </motion.div>
         ) : (
           <motion.div
