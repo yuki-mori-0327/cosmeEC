@@ -1041,6 +1041,8 @@ function CollectionsPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 20000]);
 
+  useEffect(() => { setActiveCategory(initialCategory); }, [initialCategory]);
+
   const filtered = ALL_COLLECTION_PRODUCTS.filter((p) =>
     activeCategory === "すべて" ? true
     : activeCategory === "メイクアップ" ? MAKEUP_CATS.includes(p.category)
