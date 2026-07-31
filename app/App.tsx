@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press" | "privacy" | "terms" | "tokushoho";
+type Page = "home" | "collections" | "collections-hub" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press" | "privacy" | "terms" | "tokushoho";
 
 type CartItem = {
   id: number;
@@ -205,15 +205,16 @@ function Nav() {
   const { page, setPage, setInitialCategory, cart, setCartOpen, wishlist, setWishOpen, setSearchOpen } = useContext(NavCtx);
   const cartCount = cart.reduce((sum, i) => sum + i.qty, 0);
 
-  const NAV_ITEMS: { label: string; category: string }[] = [
+  const NAV_ITEMS: { label: string; category: string; hub?: boolean }[] = [
     { label: "スキンケア", category: "スキンケア" },
     { label: "メイクアップ", category: "メイクアップ" },
     { label: "フレグランス", category: "フレグランス" },
-    { label: "コレクション", category: "すべて" },
+    { label: "コレクション", category: "すべて", hub: true },
   ];
 
-  const handleNav = (category: string) => {
-    setInitialCategory(category);
+  const handleNav = (item: { category: string; hub?: boolean }) => {
+    if (item.hub) { setPage("collections-hub"); return; }
+    setInitialCategory(item.category);
     setPage("collections");
   };
 
@@ -238,14 +239,14 @@ function Nav() {
               <Menu size={20} />
             </button>
             <nav className="hidden md:flex gap-7 text-xs tracking-[0.18em] uppercase">
-              {NAV_ITEMS.map(({ label, category }) => (
+              {NAV_ITEMS.map((item) => (
                 <a
-                  key={label}
+                  key={item.label}
                   href="#"
-                  onClick={(e) => { e.preventDefault(); handleNav(category); }}
+                  onClick={(e) => { e.preventDefault(); handleNav(item); }}
                   className="text-foreground/60 hover:text-primary transition-colors duration-300 cursor-pointer"
                 >
-                  {label}
+                  {item.label}
                 </a>
               ))}
             </nav>
@@ -320,17 +321,17 @@ function Nav() {
               { label: "スキンケア", category: "スキンケア" },
               { label: "メイクアップ", category: "メイクアップ" },
               { label: "フレグランス", category: "フレグランス" },
-              { label: "コレクション", category: "すべて" },
+              { label: "コレクション", category: "すべて", hub: true },
               { label: "新作", category: "すべて" },
               { label: "セール", category: "すべて" },
-            ].map(({ label, category }) => (
+            ].map((item) => (
               <a
-                key={label}
+                key={item.label}
                 href="#"
-                onClick={(e) => { e.preventDefault(); setOpen(false); handleNav(category); }}
+                onClick={(e) => { e.preventDefault(); setOpen(false); handleNav(item); }}
                 className="text-foreground/70 hover:text-primary transition-colors text-sm tracking-widest uppercase border-b border-border pb-4 cursor-pointer"
               >
-                {label}
+                {item.label}
               </a>
             ))}
           </motion.nav>
@@ -1032,6 +1033,137 @@ const ALL_COLLECTION_PRODUCTS = [
 const SORT_OPTIONS = ["おすすめ順", "新着順", "価格が低い順", "価格が高い順", "レビュー評価順"];
 const CATEGORIES = ["すべて", "スキンケア", "メイクアップ", "ベースメイク", "リップ", "アイメイク", "フレグランス"];
 const MAKEUP_CATS = ["ベースメイク", "リップ", "アイメイク"];
+
+function CollectionsHubPage() {
+  const { setPage, setInitialCategory } = useContext(NavCtx);
+
+  const collections = [
+    {
+      key: "skin-ritual" as Page,
+      label: "Skin Ritual",
+      title: "スキン リチュアル",
+      subtitle: "科学と自然の融合",
+      desc: "肌本来の輝きを引き出すスキンケアコレクション。植物由来の活性成分と最先端の処方が、毎日のケアをリチュアルへと昇華させます。",
+      img: "photo-1629380639080-cd7ee1b2c8f1",
+      count: "12 アイテム",
+      category: "スキンケア",
+    },
+    {
+      key: "color-drama" as Page,
+      label: "Color Drama",
+      title: "カラー ドラマ",
+      subtitle: "色で語る、あなたの物語",
+      desc: "大胆にして繊細、華やかにして上品。発色・持続性・肌へのやさしさを妥協なく追求したメイクアップコレクション。",
+      img: "photo-1512496015851-a90fb38ba796",
+      count: "18 アイテム",
+      category: "メイクアップ",
+    },
+    {
+      key: "fragrance" as Page,
+      label: "Sensual Fragrance",
+      title: "センシュアル フレグランス",
+      subtitle: "記憶に残る香りの軌跡",
+      desc: "グラース産の希少な花々から抽出した天然香料を中心に調香。時間とともに変化する香りの旅が、あなたの個性を際立たせます。",
+      img: "photo-1588405748880-12d1d2a59f75",
+      count: "8 アイテム",
+      category: "フレグランス",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-24 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.1) 0%, transparent 60%)" }} />
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22,1,0.36,1] }}>
+            <button onClick={() => setPage("home")} className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-10 mx-auto">
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-5">Collections</p>
+            <h1 className="font-['Cormorant_Garamond'] text-6xl md:text-7xl text-foreground font-light mb-6">
+              LUMIÈRE の<span className="italic gold-shimmer">世界</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-['Jost'] font-light leading-loose max-w-xl mx-auto">
+              スキンケア、メイクアップ、フレグランス——三つのコレクションが奏でる、美しさのトリロジー。
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* コレクションカード */}
+      <div className="max-w-5xl mx-auto px-6 py-20 space-y-6">
+        {collections.map((col, i) => (
+          <FadeUp key={col.key}>
+            <div
+              className="group relative overflow-hidden border border-border/30 cursor-pointer"
+              onClick={() => setPage(col.key)}
+              style={{ minHeight: "420px" }}
+            >
+              {/* 背景画像 */}
+              <img
+                src={`https://images.unsplash.com/${col.img}?w=1400&h=600&fit=crop&auto=format`}
+                alt={col.title}
+                className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-45 transition-opacity duration-700 pointer-events-none"
+              />
+              <div className="absolute inset-0 pointer-events-none" style={{ background: i % 2 === 0 ? "linear-gradient(to right, rgba(8,8,8,0.92) 40%, rgba(8,8,8,0.3) 100%)" : "linear-gradient(to left, rgba(8,8,8,0.92) 40%, rgba(8,8,8,0.3) 100%)" }} />
+
+              {/* コンテンツ */}
+              <div className={`relative z-10 flex flex-col justify-center h-full p-12 md:p-16 ${i % 2 === 0 ? "items-start" : "items-end text-right"}`} style={{ minHeight: "420px" }}>
+                <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-3">{col.label}</p>
+                <h2 className="font-['Cormorant_Garamond'] text-5xl md:text-6xl text-foreground font-light mb-3 leading-tight">
+                  {col.title}
+                </h2>
+                <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-6">{col.subtitle}</p>
+                <p className="text-sm text-muted-foreground font-['Jost'] font-light leading-loose max-w-sm mb-8">{col.desc}</p>
+                <div className="flex items-center gap-6">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setPage(col.key); }}
+                    className="group/btn inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+                  >
+                    コレクションを見る
+                    <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setInitialCategory(col.category); setPage("collections"); }}
+                    className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {col.count} →
+                  </button>
+                </div>
+              </div>
+
+              {/* 番号装飾 */}
+              <span className="absolute bottom-8 right-10 font-['Cormorant_Garamond'] text-8xl text-foreground/5 select-none pointer-events-none leading-none">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </div>
+          </FadeUp>
+        ))}
+      </div>
+
+      {/* 全商品へのリンク */}
+      <FadeUp>
+        <div className="max-w-5xl mx-auto px-6 pb-20">
+          <div className="border border-border/40 p-10 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-primary mb-3">All Products</p>
+            <h2 className="font-['Cormorant_Garamond'] text-3xl text-foreground mb-3">すべての商品を見る</h2>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-7">
+              カテゴリ・価格・評価で絞り込んで、あなただけの一品を見つけてください。
+            </p>
+            <button
+              onClick={() => { setInitialCategory("すべて"); setPage("collections"); }}
+              className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300"
+            >
+              全商品一覧へ
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </FadeUp>
+    </div>
+  );
+}
 
 function CollectionsPage() {
   const { setPage, initialCategory, addToCart } = useContext(NavCtx);
@@ -3840,6 +3972,15 @@ export default function App() {
             <BrandStory />
             <Newsletter />
             <Footer />
+          </motion.div>
+        ) : page === "collections-hub" ? (
+          <motion.div
+            key="collections-hub"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <CollectionsHubPage />
           </motion.div>
         ) : page === "collections" ? (
           <motion.div
