@@ -17,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press" | "privacy" | "terms";
+type Page = "home" | "collections" | "skin-ritual" | "color-drama" | "fragrance" | "brand-story" | "new-arrivals" | "gift-sets" | "faq" | "shipping" | "returns" | "contact" | "about" | "sustainability" | "careers" | "press" | "privacy" | "terms" | "tokushoho";
 
 type CartItem = {
   id: number;
@@ -944,6 +944,7 @@ function Footer() {
                 onClick={
                   item === "プライバシーポリシー" ? (e) => { e.preventDefault(); setPage("privacy"); }
                   : item === "利用規約" ? (e) => { e.preventDefault(); setPage("terms"); }
+                  : item === "特定商取引法" ? (e) => { e.preventDefault(); setPage("tokushoho"); }
                   : undefined
                 }
                 className="text-[10px] text-muted-foreground hover:text-primary transition-colors tracking-wider"
@@ -1381,6 +1382,80 @@ function CollectionDetailPage({ collectionKey }: { collectionKey: "skin-ritual" 
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function TokushohoPage() {
+  const { setPage } = useContext(NavCtx);
+
+  const items = [
+    { label: "販売業者", value: "LUMIÈRE BEAUTY 株式会社" },
+    { label: "代表者", value: "中村 光" },
+    { label: "所在地", value: "〒150-0001 東京都渋谷区神宮前5-XX-XX LUMIÈREビル3F" },
+    { label: "電話番号", value: "03-XXXX-XXXX（平日10:00〜18:00）" },
+    { label: "メールアドレス", value: "support@lumiere-beauty.jp" },
+    { label: "ウェブサイト", value: "https://lumiere-beauty.jp" },
+    { label: "販売価格", value: "各商品ページに記載の価格（消費税込）" },
+    { label: "追加手数料", value: "送料：¥10,000未満のご注文は¥660（税込）。¥10,000以上は送料無料。コンビニ払い手数料：¥220（税込）" },
+    { label: "支払い方法", value: "クレジットカード（VISA・Mastercard・JCB・AMEX）、コンビニ払い、銀行振込、後払い（ペイディ）" },
+    { label: "支払い時期", value: "クレジットカード：注文確定時に決済。コンビニ払い・銀行振込：注文後7日以内。後払い：翌月末日" },
+    { label: "商品の引渡し時期", value: "注文確定後2〜3営業日以内に発送。発送後1〜3日でお届け（離島・一部地域を除く）" },
+    { label: "返品・交換", value: "商品到着後14日以内で未開封・未使用の商品に限り返品可能。お客様都合の返品送料はお客様負担。初期不良・発送ミスは当社負担にて対応" },
+    { label: "動作環境", value: "最新版のChrome・Safari・Firefox・Edge（JavaScriptおよびCookie有効な環境）" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pt-16">
+      {/* Hero */}
+      <div className="relative overflow-hidden py-20 border-b border-border/30">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 55%)" }} />
+        <div className="max-w-3xl mx-auto px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, ease: [0.22,1,0.36,1] }}>
+            <button onClick={() => setPage("home")} className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-muted-foreground hover:text-primary transition-colors mb-8">
+              ← ホームに戻る
+            </button>
+            <p className="text-[10px] tracking-[0.5em] uppercase text-primary mb-4">Legal</p>
+            <h1 className="font-['Cormorant_Garamond'] text-5xl text-foreground font-medium mb-4">
+              特定商取引法に<span className="italic gold-shimmer">基づく表記</span>
+            </h1>
+            <p className="text-xs text-muted-foreground font-['Jost'] font-light">特定商取引に関する法律第11条に基づき、以下の事項を表示します。</p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-14">
+        <FadeUp>
+          <div className="border border-border/30 overflow-hidden">
+            {items.map((item, i) => (
+              <div
+                key={item.label}
+                className={`grid md:grid-cols-3 gap-4 px-6 py-5 ${i !== items.length - 1 ? "border-b border-border/20" : ""} ${i % 2 === 0 ? "" : "bg-muted/30"}`}
+              >
+                <p className="text-[10px] tracking-[0.2em] uppercase text-primary font-['Jost'] flex-shrink-0 pt-0.5">{item.label}</p>
+                <p className="md:col-span-2 text-sm text-foreground font-['Jost'] font-light leading-relaxed">{item.value}</p>
+              </div>
+            ))}
+          </div>
+        </FadeUp>
+
+        <FadeUp className="mt-12">
+          <div className="border border-border/40 p-8 text-center" style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 100%)" }}>
+            <p className="text-sm text-muted-foreground font-['Jost'] font-light mb-5">
+              ご不明な点がございましたら、お気軽にお問い合わせください。
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button onClick={() => setPage("terms")} className="inline-flex items-center gap-3 border border-primary text-primary px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-primary hover:text-primary-foreground transition-colors duration-300">
+                利用規約
+              </button>
+              <button onClick={() => setPage("contact")} className="group inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase hover:bg-accent transition-colors duration-300">
+                お問い合わせ
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </FadeUp>
       </div>
     </div>
   );
@@ -3884,6 +3959,15 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
             <TermsPage />
+          </motion.div>
+        ) : page === "tokushoho" ? (
+          <motion.div
+            key="tokushoho"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <TokushohoPage />
           </motion.div>
         ) : (
           <motion.div
